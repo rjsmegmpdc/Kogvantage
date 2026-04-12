@@ -1,0 +1,9 @@
+# Replace with your domain
+# kogvantage.yourdomain.com {
+#   reverse_proxy app:3000
+# }
+
+# Development: use localhost
+:80 {
+  reverse_proxy app:3000
+}
