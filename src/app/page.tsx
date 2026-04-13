@@ -19,6 +19,8 @@ import { generateMockGanttData } from '@/lib/adapters/ganttAdapter';
 import { generateMockSubwayData, DEFAULT_STATION_TYPES } from '@/lib/adapters/subwayAdapter';
 import type { ZoomLevel } from '@/constants/gantt';
 import AssistantPanel from '@/components/AI/AssistantPanel';
+import { usePortfolioData } from '@/hooks/usePortfolioData';
+import { usePortfolioMutations } from '@/hooks/usePortfolioMutations';
 import CoordinatorDashboard from '@/components/Financial/CoordinatorDashboard';
 import DataImport from '@/components/Financial/DataImport';
 import VarianceAlerts from '@/components/Financial/VarianceAlerts';
@@ -55,9 +57,13 @@ export default function DashboardPage() {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [zoomLevel, setZoomLevel] = useState<ZoomLevel>('Month');
 
-  // Mock data — will be replaced by tRPC queries
-  const ganttProjects = useMemo(() => generateMockGanttData(), []);
-  const subwayRoutes = useMemo(() => generateMockSubwayData(), []);
+  // Real data from tRPC (falls back to mock if DB is empty)
+  const portfolio = usePortfolioData();
+  const mutations = usePortfolioMutations();
+  const mockGantt = useMemo(() => generateMockGanttData(), []);
+  const mockSubway = useMemo(() => generateMockSubwayData(), []);
+  const ganttProjects = portfolio.ganttProjects.length > 0 ? portfolio.ganttProjects : mockGantt;
+  const subwayRoutes = portfolio.subwayRoutes.length > 0 ? portfolio.subwayRoutes : mockSubway;
   const [stationTypes, setStationTypes] = useState(DEFAULT_STATION_TYPES);
   const [aiPanelOpen, setAiPanelOpen] = useState(false);
   const [showOnboarding, setShowOnboarding] = useState(false);
@@ -279,8 +285,9 @@ export default function DashboardPage() {
               projects={ganttProjects}
               zoomLevel={zoomLevel}
               onZoomChange={(z) => setZoomLevel(z as ZoomLevel)}
-              onTaskUpdate={(projectId, taskId, updates) => {
-                console.log('Task update:', { projectId, taskId, updates });
+              onTaskUpdate={async (projectId, taskId, updates) => {
+                await mutations.updateTask(projectId, taskId, updates);
+                portfolio.refresh();
               }}
             />
           )}
@@ -318,13 +325,8 @@ export default function DashboardPage() {
           {currentView === 'COORDINATOR' && (
             <div className="p-6 overflow-auto h-full">
               <CoordinatorDashboard
-                summary={{
-                  totalBudget: 8500000,
-                  totalSpent: 3200000,
-                  remaining: 5300000,
-                  activeAlerts: 5,
-                }}
-                healthStatus="healthy"
+                summary={portfolio.financialSummary}
+                healthStatus={portfolio.financialSummary.activeAlerts > 3 ? 'at-risk' : 'healthy'}
                 recentAlerts={[
                   { id: '1', severity: 'critical', message: 'Resource over-allocated: Sarah Johnson at 140%' },
                   { id: '2', severity: 'high', message: 'Project "Platform Modernization" 15% over budget' },
@@ -380,7 +382,7 @@ export default function DashboardPage() {
                   { id: '3', alert_type: 'schedule', severity: 'medium', entity_type: 'project', entity_id: 'p3', message: 'Cloud Migration behind schedule — 8 working days behind forecast', details: '{}', variance_amount: 8, variance_percent: 12, acknowledged: false, acknowledged_at: undefined, created_at: new Date(Date.now() - 86400000).toISOString() },
                   { id: '4', alert_type: 'effort', severity: 'low', entity_type: 'feature', entity_id: 'f1', message: 'API Gateway feature actual effort 5% above estimate', details: '{}', variance_amount: 12, variance_percent: 5, acknowledged: true, acknowledged_at: new Date().toISOString(), created_at: new Date(Date.now() - 172800000).toISOString() },
                 ]}
-                onAcknowledge={(id) => console.log('Acknowledge:', id)}
+                onAcknowledge={async (id) => { await mutations.acknowledgeAlert(id); portfolio.refresh(); }}
                 onExplainWithAI={async (alert) => `This ${alert.alert_type} variance of ${(alert.variance_percent ?? 0).toFixed(1)}% is triggered because the actual values exceed the configured threshold. Recommended action: review the allocation and adjust the forecast.`}
               />
             </div>
