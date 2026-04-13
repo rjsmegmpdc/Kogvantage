@@ -22,6 +22,8 @@ import AssistantPanel from '@/components/AI/AssistantPanel';
 import CoordinatorDashboard from '@/components/Financial/CoordinatorDashboard';
 import DataImport from '@/components/Financial/DataImport';
 import VarianceAlerts from '@/components/Financial/VarianceAlerts';
+import OnboardingWizard from '@/components/Onboarding/OnboardingWizard';
+import SettingsView from '@/components/Modules/SettingsView';
 
 type ViewMode =
   | 'GANTT'
@@ -57,6 +59,16 @@ export default function DashboardPage() {
   const subwayRoutes = useMemo(() => generateMockSubwayData(), []);
   const [stationTypes, setStationTypes] = useState(DEFAULT_STATION_TYPES);
   const [aiPanelOpen, setAiPanelOpen] = useState(false);
+  const [showOnboarding, setShowOnboarding] = useState(false);
+  const [theme, setTheme] = useState<'dark' | 'light' | 'system'>('dark');
+  const [settings, setSettings] = useState<Record<string, string>>({
+    theme: 'dark',
+    org_name: 'My Organization',
+    currency: 'NZD',
+    fiscal_year_start: '7',
+    date_format: 'DD-MM-YYYY',
+    auto_save: 'true',
+  });
 
   return (
     <div className="flex h-screen overflow-hidden">
@@ -235,6 +247,17 @@ export default function DashboardPage() {
 
           <div className="flex items-center gap-3">
             <button
+              onClick={() => setShowOnboarding(true)}
+              className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-medium transition-colors"
+              style={{
+                backgroundColor: 'var(--color-surface-raised)',
+                color: 'var(--color-text-secondary)',
+              }}
+            >
+              <Settings size={14} />
+              Setup
+            </button>
+            <button
               onClick={() => setAiPanelOpen(!aiPanelOpen)}
               className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-medium transition-colors"
               style={{
@@ -339,17 +362,32 @@ export default function DashboardPage() {
             </div>
           )}
 
-          {(currentView === 'GOVERNANCE' || currentView === 'SETTINGS') && (
+          {currentView === 'SETTINGS' && (
+            <div className="p-6 overflow-auto h-full">
+              <SettingsView
+                settings={settings}
+                onSettingChange={(key, value) => {
+                  setSettings((prev) => ({ ...prev, [key]: value }));
+                }}
+                onThemeChange={(t) => {
+                  setTheme(t);
+                  document.documentElement.className = t === 'system' ? '' : t;
+                }}
+              />
+            </div>
+          )}
+
+          {currentView === 'GOVERNANCE' && (
             <div className="flex flex-col items-center justify-center h-full gap-4 p-6"
               style={{ color: 'var(--color-text-muted)' }}
             >
               <Bot size={64} strokeWidth={1} style={{ color: 'var(--color-primary)' }} />
               <h3 className="text-xl font-semibold" style={{ color: 'var(--color-text)' }}>
-                {NAV_ITEMS.find((i) => i.id === currentView)?.label}
+                Governance
               </h3>
               <p className="text-sm text-center max-w-md">
-                This module is coming in a future phase. The foundation is already built —
-                database schema, services, and types are ready.
+                Governance module is coming in Phase 8. Stage gates, compliance tracking,
+                and decision logging are already in the database schema.
               </p>
             </div>
           )}
@@ -358,6 +396,25 @@ export default function DashboardPage() {
 
       {/* AI Assistant Panel */}
       <AssistantPanel isOpen={aiPanelOpen} onClose={() => setAiPanelOpen(false)} />
+
+      {/* Onboarding Wizard */}
+      {showOnboarding && (
+        <OnboardingWizard
+          onComplete={(config) => {
+            console.log('Onboarding complete:', config);
+            setSettings((prev) => ({
+              ...prev,
+              org_name: config.orgName,
+              currency: config.currency,
+              fiscal_year_start: String(config.fiscalYearStart),
+              date_format: config.dateFormat,
+            }));
+            if (config.defaultView === 'SUBWAY') setCurrentView('SUBWAY');
+            setShowOnboarding(false);
+          }}
+          onSkip={() => setShowOnboarding(false)}
+        />
+      )}
     </div>
   );
 }
