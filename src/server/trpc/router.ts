@@ -11,6 +11,7 @@ import { coordinatorRouter } from './coordinator';
 import { integrationsRouter } from './integrations';
 import { aiRouter } from './ai';
 import { ingestionRouter } from './ingestion';
+import { reportsRouter } from './reports';
 
 export const appRouter = router({
   projects: projectsRouter,
@@ -20,6 +21,7 @@ export const appRouter = router({
   integrations: integrationsRouter,
   ai: aiRouter,
   ingestion: ingestionRouter,
+  reports: reportsRouter,
 });
 
 export type AppRouter = typeof appRouter;

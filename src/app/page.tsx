@@ -24,6 +24,7 @@ import { usePortfolioMutations } from '@/hooks/usePortfolioMutations';
 import CoordinatorDashboard from '@/components/Financial/CoordinatorDashboard';
 import DataImport from '@/components/Financial/DataImport';
 import VarianceAlerts from '@/components/Financial/VarianceAlerts';
+import ReportingView from '@/components/Modules/ReportingView';
 import OnboardingWizard from '@/components/Onboarding/OnboardingWizard';
 import SettingsView from '@/components/Modules/SettingsView';
 import DataPackUploader from '@/components/Ingestion/DataPackUploader';
@@ -375,15 +376,36 @@ export default function DashboardPage() {
 
           {currentView === 'REPORTING' && (
             <div className="p-6 overflow-auto h-full">
-              <VarianceAlerts
-                alerts={[
-                  { id: '1', alert_type: 'commitment', severity: 'critical', entity_type: 'resource', entity_id: 'r1', message: 'Sarah Johnson allocated 140% — over capacity by 32 hours this sprint', details: '{}', variance_amount: 32, variance_percent: 40, acknowledged: false, acknowledged_at: undefined, created_at: new Date(Date.now() - 3600000).toISOString() },
-                  { id: '2', alert_type: 'cost', severity: 'high', entity_type: 'project', entity_id: 'p1', message: 'Platform Modernization actual costs exceed forecast by $127,000 NZD', details: '{}', variance_amount: 127000, variance_percent: 15.3, acknowledged: false, acknowledged_at: undefined, created_at: new Date(Date.now() - 7200000).toISOString() },
-                  { id: '3', alert_type: 'schedule', severity: 'medium', entity_type: 'project', entity_id: 'p3', message: 'Cloud Migration behind schedule — 8 working days behind forecast', details: '{}', variance_amount: 8, variance_percent: 12, acknowledged: false, acknowledged_at: undefined, created_at: new Date(Date.now() - 86400000).toISOString() },
-                  { id: '4', alert_type: 'effort', severity: 'low', entity_type: 'feature', entity_id: 'f1', message: 'API Gateway feature actual effort 5% above estimate', details: '{}', variance_amount: 12, variance_percent: 5, acknowledged: true, acknowledged_at: new Date().toISOString(), created_at: new Date(Date.now() - 172800000).toISOString() },
-                ]}
-                onAcknowledge={async (id) => { await mutations.acknowledgeAlert(id); portfolio.refresh(); }}
-                onExplainWithAI={async (alert) => `This ${alert.alert_type} variance of ${(alert.variance_percent ?? 0).toFixed(1)}% is triggered because the actual values exceed the configured threshold. Recommended action: review the allocation and adjust the forecast.`}
+              <ReportingView
+                onGenerateReport={async (type) => {
+                  try {
+                    const res = await fetch(`/api/trpc/reports.generate${type.charAt(0).toUpperCase() + type.slice(1)}`, {
+                      method: 'POST',
+                      headers: { 'Content-Type': 'application/json' },
+                      body: JSON.stringify({ '0': { json: {} } }),
+                    });
+                    const json = await res.json();
+                    const result = json?.[0]?.result?.data?.json || json?.result?.data?.json || json?.result?.data;
+                    if (result?.data) {
+                      const bytes = Uint8Array.from(atob(result.data), c => c.charCodeAt(0));
+                      return { blob: new Blob([bytes], { type: result.mimeType }), filename: result.filename };
+                    }
+                  } catch (e) { console.error('Report generation error:', e); }
+                  // Fallback: generate a text file
+                  const text = `${type.toUpperCase()} REPORT\nGenerated: ${new Date().toLocaleDateString()}\n\nReport generation requires database data. Run: npm run db:import <files>`;
+                  return { blob: new Blob([text], { type: 'text/plain' }), filename: `kogvantage-${type}-report.txt` };
+                }}
+                onAIReport={async (prompt) => {
+                  try {
+                    const res = await fetch('/api/trpc/reports.aiReport', {
+                      method: 'POST',
+                      headers: { 'Content-Type': 'application/json' },
+                      body: JSON.stringify({ '0': { json: { prompt } } }),
+                    });
+                    const json = await res.json();
+                    return json?.[0]?.result?.data?.json || json?.result?.data?.json || 'AI report generation requires an Anthropic API key. Configure it in .env.local';
+                  } catch { return 'AI service not available. Configure ANTHROPIC_API_KEY in .env.local'; }
+                }}
               />
             </div>
           )}
