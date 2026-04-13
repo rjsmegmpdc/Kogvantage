@@ -92,6 +92,11 @@ function reportErrorMessage(err: unknown): string {
 // ── Router ───────────────────────────────────────────────────
 
 export const reportsRouter = router({
+  getSnapshot: publicProcedure.query(async () => {
+    const dataService = await getReportDataService();
+    return dataService.getSnapshot();
+  }),
+
   generateWeekly: publicProcedure.mutation(async () => {
     try {
       const dataService = await getReportDataService();

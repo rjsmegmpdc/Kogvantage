@@ -12,6 +12,7 @@ import { integrationsRouter } from './integrations';
 import { aiRouter } from './ai';
 import { ingestionRouter } from './ingestion';
 import { reportsRouter } from './reports';
+import { templatesRouter } from './templates';
 
 export const appRouter = router({
   projects: projectsRouter,
@@ -22,6 +23,7 @@ export const appRouter = router({
   ai: aiRouter,
   ingestion: ingestionRouter,
   reports: reportsRouter,
+  templates: templatesRouter,
 });
 
 export type AppRouter = typeof appRouter;

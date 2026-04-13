@@ -304,6 +304,23 @@ Use the portfolio context provided. If the data isn't available to answer the qu
   );
 }
 
+// --- Generate Comparison Narrative ---
+export async function generateComparisonNarrative(comparison: any): Promise<string> {
+  return chat([{
+    role: 'user',
+    content: `Analyze this portfolio comparison and provide a concise executive narrative (3-5 paragraphs) explaining what changed and what it means:
+
+New projects: ${JSON.stringify(comparison.newProjects?.map((p: any) => p.title) || [])}
+Removed projects: ${JSON.stringify(comparison.removedProjects?.map((p: any) => p.title) || [])}
+Budget change: $${comparison.financialDelta?.budgetChange?.toLocaleString() || 0} NZD
+Actuals change: $${comparison.financialDelta?.actualsChange?.toLocaleString() || 0} NZD
+Alert changes: ${comparison.alertsDelta?.newAlerts || 0} new, ${comparison.alertsDelta?.resolvedAlerts || 0} resolved
+Project changes: ${comparison.projectChanges?.length || 0} projects with changes
+
+Focus on: what's improved, what's at risk, and recommended actions.`
+  }]);
+}
+
 // --- Default WBS Fallback ---
 function getDefaultWBS(): WBSItem[] {
   return [

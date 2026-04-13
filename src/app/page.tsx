@@ -28,6 +28,11 @@ import ReportingView from '@/components/Modules/ReportingView';
 import OnboardingWizard from '@/components/Onboarding/OnboardingWizard';
 import SettingsView from '@/components/Modules/SettingsView';
 import DataPackUploader from '@/components/Ingestion/DataPackUploader';
+import StakeholderDashboard from '@/components/Dashboard/StakeholderDashboard';
+import LivePresentation from '@/components/Presentation/LivePresentation';
+import type { PresentationSlide } from '@/components/Presentation/LivePresentation';
+import ComparisonView from '@/components/Dashboard/ComparisonView';
+import type { ComparisonResult } from '@/components/Dashboard/ComparisonView';
 
 type ViewMode =
   | 'GANTT'
@@ -68,6 +73,9 @@ export default function DashboardPage() {
   const [stationTypes, setStationTypes] = useState(DEFAULT_STATION_TYPES);
   const [aiPanelOpen, setAiPanelOpen] = useState(false);
   const [showOnboarding, setShowOnboarding] = useState(false);
+  const [showPresentation, setShowPresentation] = useState(false);
+  const [presentationSlides, setPresentationSlides] = useState<PresentationSlide[]>([]);
+  const [showComparison, setShowComparison] = useState(false);
   const [theme, setTheme] = useState<'dark' | 'light' | 'system'>('dark');
   const [settings, setSettings] = useState<Record<string, string>>({
     theme: 'dark',
@@ -376,10 +384,33 @@ export default function DashboardPage() {
 
           {currentView === 'REPORTING' && (
             <div className="p-6 overflow-auto h-full">
-              <ReportingView
-                onGenerateReport={async (type) => {
+              <StakeholderDashboard
+                onPresent={async () => {
                   try {
-                    const res = await fetch(`/api/trpc/reports.generate${type.charAt(0).toUpperCase() + type.slice(1)}`, {
+                    const res = await fetch('/api/trpc/reports.snapshot', {
+                      method: 'POST',
+                      headers: { 'Content-Type': 'application/json' },
+                      body: JSON.stringify({ '0': { json: {} } }),
+                    });
+                    const json = await res.json();
+                    const snapshot = json?.[0]?.result?.data?.json || json?.result?.data?.json || json?.result?.data;
+                    if (snapshot) {
+                      // Dynamically import PresentationBuilder (server module)
+                      // We inline a lightweight version for the client
+                      const slides = buildPresentationClient(snapshot);
+                      setPresentationSlides(slides);
+                    } else {
+                      setPresentationSlides(buildPresentationClient(null));
+                    }
+                  } catch {
+                    setPresentationSlides(buildPresentationClient(null));
+                  }
+                  setShowPresentation(true);
+                }}
+                onCompare={() => setShowComparison(true)}
+                onGenerateReport={async (procedure) => {
+                  try {
+                    const res = await fetch(`/api/trpc/${procedure}`, {
                       method: 'POST',
                       headers: { 'Content-Type': 'application/json' },
                       body: JSON.stringify({ '0': { json: {} } }),
@@ -387,24 +418,18 @@ export default function DashboardPage() {
                     const json = await res.json();
                     const result = json?.[0]?.result?.data?.json || json?.result?.data?.json || json?.result?.data;
                     if (result?.data) {
-                      const bytes = Uint8Array.from(atob(result.data), c => c.charCodeAt(0));
-                      return { blob: new Blob([bytes], { type: result.mimeType }), filename: result.filename };
+                      const bytes = Uint8Array.from(atob(result.data), (c) => c.charCodeAt(0));
+                      const blob = new Blob([bytes], { type: result.mimeType });
+                      const url = URL.createObjectURL(blob);
+                      const a = document.createElement('a');
+                      a.href = url;
+                      a.download = result.filename || 'report';
+                      a.click();
+                      URL.revokeObjectURL(url);
                     }
-                  } catch (e) { console.error('Report generation error:', e); }
-                  // Fallback: generate a text file
-                  const text = `${type.toUpperCase()} REPORT\nGenerated: ${new Date().toLocaleDateString()}\n\nReport generation requires database data. Run: npm run db:import <files>`;
-                  return { blob: new Blob([text], { type: 'text/plain' }), filename: `kogvantage-${type}-report.txt` };
-                }}
-                onAIReport={async (prompt) => {
-                  try {
-                    const res = await fetch('/api/trpc/reports.aiReport', {
-                      method: 'POST',
-                      headers: { 'Content-Type': 'application/json' },
-                      body: JSON.stringify({ '0': { json: { prompt } } }),
-                    });
-                    const json = await res.json();
-                    return json?.[0]?.result?.data?.json || json?.result?.data?.json || 'AI report generation requires an Anthropic API key. Configure it in .env.local';
-                  } catch { return 'AI service not available. Configure ANTHROPIC_API_KEY in .env.local'; }
+                  } catch (e) {
+                    console.error('Report generation error:', e);
+                  }
                 }}
               />
             </div>
@@ -463,6 +488,235 @@ export default function DashboardPage() {
           onSkip={() => setShowOnboarding(false)}
         />
       )}
+
+      {/* Live Presentation overlay */}
+      {showPresentation && presentationSlides.length > 0 && (
+        <LivePresentation
+          slides={presentationSlides}
+          template={{
+            colorPalette: ['#6366f1', '#8b5cf6', '#06b6d4', '#10b981', '#f59e0b', '#ef4444'],
+            fontPrimary: 'system-ui, -apple-system, sans-serif',
+            fontHeading: 'system-ui, -apple-system, sans-serif',
+          }}
+          onClose={() => setShowPresentation(false)}
+          onExport={async () => {
+            try {
+              const res = await fetch('/api/trpc/reports.generateExecutive', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ '0': { json: {} } }),
+              });
+              const json = await res.json();
+              const result = json?.[0]?.result?.data?.json || json?.result?.data?.json || json?.result?.data;
+              if (result?.data) {
+                const bytes = Uint8Array.from(atob(result.data), (c) => c.charCodeAt(0));
+                const blob = new Blob([bytes], { type: result.mimeType });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = result.filename || 'presentation.pptx';
+                a.click();
+                URL.revokeObjectURL(url);
+              }
+            } catch (e) {
+              console.error('PPTX export error:', e);
+            }
+          }}
+        />
+      )}
+
+      {/* Comparison overlay */}
+      {showComparison && (
+        <div
+          style={{
+            position: 'fixed',
+            inset: 0,
+            zIndex: 9998,
+            background: 'rgba(0,0,0,0.6)',
+            backdropFilter: 'blur(4px)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: 24,
+          }}
+          onClick={(e) => {
+            if (e.target === e.currentTarget) setShowComparison(false);
+          }}
+        >
+          <div
+            style={{
+              width: '90vw',
+              maxWidth: 1100,
+              maxHeight: '85vh',
+              overflow: 'auto',
+              borderRadius: 16,
+              background: 'var(--color-surface)',
+              border: '1px solid var(--color-border)',
+              boxShadow: '0 25px 50px -12px rgba(0,0,0,0.5)',
+            }}
+          >
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                padding: '16px 24px',
+                borderBottom: '1px solid var(--color-border)',
+              }}
+            >
+              <h3 style={{ fontSize: 16, fontWeight: 600, color: 'var(--color-text)' }}>
+                Snapshot Comparison
+              </h3>
+              <button
+                onClick={() => setShowComparison(false)}
+                style={{
+                  padding: '4px 12px',
+                  borderRadius: 6,
+                  border: '1px solid var(--color-border)',
+                  background: 'var(--color-surface-raised)',
+                  color: 'var(--color-text-muted)',
+                  fontSize: 13,
+                  cursor: 'pointer',
+                }}
+              >
+                Close
+              </button>
+            </div>
+            <div style={{ padding: 24 }}>
+              <ComparisonView
+                snapshots={[]}
+                onCompare={async (oldId: string, newId: string) => {
+                  try {
+                    const res = await fetch('/api/trpc/reports.compareSnapshots', {
+                      method: 'POST',
+                      headers: { 'Content-Type': 'application/json' },
+                      body: JSON.stringify({ '0': { json: { oldId, newId } } }),
+                    });
+                    const json = await res.json();
+                    return json?.[0]?.result?.data?.json || json?.result?.data?.json;
+                  } catch {
+                    return {
+                      oldLabel: oldId,
+                      newLabel: newId,
+                      oldDate: '',
+                      newDate: '',
+                      newProjects: [],
+                      removedProjects: [],
+                      projectChanges: [],
+                      financialDelta: { budgetChange: 0, actualsChange: 0, varianceChange: 0, burnRateChange: 0 },
+                      alertsDelta: { newAlerts: 0, resolvedAlerts: 0, totalChange: 0 },
+                      resourceDelta: { added: 0, removed: 0, totalChange: 0 },
+                    } as ComparisonResult;
+                  }
+                }}
+              />
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
+}
+
+// =====================================================================
+// Client-side presentation builder (mirrors PresentationBuilder.ts)
+// =====================================================================
+
+function buildPresentationClient(snapshot: any): PresentationSlide[] {
+  const orgName = snapshot?.orgName || 'Kogvantage';
+  const now = new Date().toLocaleDateString('en-NZ', {
+    day: '2-digit',
+    month: 'long',
+    year: 'numeric',
+  });
+  const generatedAt = snapshot?.generatedAt
+    ? new Date(snapshot.generatedAt).toLocaleDateString('en-NZ', { day: '2-digit', month: 'long', year: 'numeric' })
+    : now;
+
+  const projects: any[] = snapshot?.projects || [];
+  const activeAlerts: any[] = snapshot?.activeAlerts || [];
+  const byStatus: Record<string, number> = snapshot?.byStatus || {};
+
+  return [
+    {
+      type: 'title',
+      title: orgName,
+      subtitle: 'Portfolio Status Report',
+      data: { date: generatedAt },
+    },
+    {
+      type: 'kpi',
+      title: 'Key Performance Indicators',
+      data: {
+        kpis: [
+          { label: 'Projects', value: snapshot?.totalProjects ?? projects.length },
+          { label: 'Avg Health', value: `${snapshot?.averageHealth ?? 0}%`, color: (snapshot?.averageHealth ?? 0) >= 70 ? '#10b981' : '#f59e0b' },
+          { label: 'Total Budget', value: `$${((snapshot?.totalBudget ?? 0) / 1000).toFixed(0)}k` },
+          { label: 'Burn Rate', value: `$${((snapshot?.burnRate ?? 0) / 1000).toFixed(0)}k/mo` },
+          { label: 'Active Alerts', value: activeAlerts.length, color: activeAlerts.length > 5 ? '#ef4444' : activeAlerts.length > 0 ? '#f59e0b' : '#10b981' },
+          { label: 'Resources', value: snapshot?.totalResources ?? 0 },
+        ],
+      },
+    },
+    {
+      type: 'chart',
+      title: 'Budget vs Actuals',
+      subtitle: 'Per project comparison (NZD)',
+      chartType: 'bar',
+      data: {
+        labels: ['Budget', 'Actuals'],
+        items: projects.map((p: any) => ({
+          name: p.title || 'Untitled',
+          values: [p.budgetDollars || 0, p.actualsDollars || 0],
+        })),
+      },
+    },
+    {
+      type: 'chart',
+      title: 'Status Distribution',
+      subtitle: 'Project breakdown by current status',
+      chartType: 'pie',
+      data: {
+        items: Object.entries(byStatus).map(([status, count]) => ({
+          name: status.charAt(0).toUpperCase() + status.slice(1),
+          values: [count],
+        })),
+      },
+    },
+    {
+      type: 'table',
+      title: 'Project Status Overview',
+      data: {
+        headers: ['Project', 'Status', 'Health', 'Budget (NZD)'],
+        rows: projects.map((p: any) => [
+          p.title || 'Untitled',
+          (p.status || 'unknown').charAt(0).toUpperCase() + (p.status || 'unknown').slice(1),
+          `${p.health ?? 0}%`,
+          `$${(p.budgetDollars || 0).toLocaleString('en-NZ')}`,
+        ]),
+      },
+    },
+    {
+      type: 'table',
+      title: 'Active Alerts',
+      data: {
+        headers: ['Severity', 'Type', 'Message'],
+        rows: activeAlerts.length > 0
+          ? activeAlerts.map((a: any) => [(a.severity || 'info').toUpperCase(), a.type || '-', a.message || '-'])
+          : [['--', '--', 'No active alerts']],
+      },
+    },
+    {
+      type: 'summary',
+      title: 'Key Findings',
+      subtitle: 'AI-generated insights',
+      data: {
+        points: [
+          'Key findings will be generated by AI based on the current portfolio snapshot.',
+          'Connect an Anthropic API key to enable intelligent narrative summaries.',
+          'AI can identify trends, risks, and recommendations across all projects.',
+        ],
+      },
+    },
+  ];
 }

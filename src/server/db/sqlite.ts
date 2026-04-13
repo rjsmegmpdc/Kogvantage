@@ -37,7 +37,11 @@ function initializeSchema(db: Database.Database): void {
     db.exec(SCHEMA_V1);
     db.pragma('user_version = 1');
   }
-  // Future migrations: if (version < 2) { ... }
+  if (version < 2) {
+    db.exec(SCHEMA_V2);
+    db.pragma('user_version = 2');
+  }
+  // Future migrations: if (version < 3) { ... }
 }
 
 // ============================================================
@@ -495,6 +499,19 @@ CREATE INDEX IF NOT EXISTS idx_audit_entity ON audit_events(entity_type, entity_
 CREATE INDEX IF NOT EXISTS idx_codewords_category ON codewords(category, is_active);
 CREATE INDEX IF NOT EXISTS idx_users_email ON users(email);
 CREATE INDEX IF NOT EXISTS idx_ledger_project ON finance_ledger_entries(project_id, period_year, period_month);
+`;
+
+// ============================================================
+// Schema V2 — Report snapshots for comparison
+// ============================================================
+const SCHEMA_V2 = `
+CREATE TABLE IF NOT EXISTS report_snapshots (
+  id TEXT PRIMARY KEY,
+  snapshot_data TEXT NOT NULL,
+  label TEXT NOT NULL,
+  type TEXT DEFAULT 'manual',
+  created_at TEXT NOT NULL DEFAULT (datetime('now'))
+);
 `;
 
 export function closeDb(): void {
