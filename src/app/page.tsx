@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import {
   BarChart3,
   Train,
@@ -13,6 +13,11 @@ import {
   ChevronRight,
   Zap,
 } from 'lucide-react';
+import { GanttView } from '@/components/Gantt/GanttView';
+import SubwayView from '@/components/Subway/SubwayView';
+import { generateMockGanttData } from '@/lib/adapters/ganttAdapter';
+import { generateMockSubwayData, DEFAULT_STATION_TYPES } from '@/lib/adapters/subwayAdapter';
+import type { ZoomLevel } from '@/constants/gantt';
 
 type ViewMode =
   | 'GANTT'
@@ -41,6 +46,12 @@ const NAV_ITEMS: {
 export default function DashboardPage() {
   const [currentView, setCurrentView] = useState<ViewMode>('GANTT');
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [zoomLevel, setZoomLevel] = useState<ZoomLevel>('Month');
+
+  // Mock data — will be replaced by tRPC queries
+  const ganttProjects = useMemo(() => generateMockGanttData(), []);
+  const subwayRoutes = useMemo(() => generateMockSubwayData(), []);
+  const [stationTypes, setStationTypes] = useState(DEFAULT_STATION_TYPES);
 
   return (
     <div className="flex h-screen overflow-hidden">
@@ -232,38 +243,62 @@ export default function DashboardPage() {
         </header>
 
         {/* Content Area */}
-        <div className="flex-1 overflow-auto p-6">
-          <div
-            className="flex flex-col items-center justify-center h-full gap-4"
-            style={{ color: 'var(--color-text-muted)' }}
-          >
-            <Bot size={64} strokeWidth={1} style={{ color: 'var(--color-primary)' }} />
-            <h3 className="text-xl font-semibold" style={{ color: 'var(--color-text)' }}>
-              Welcome to Kogvantage
-            </h3>
-            <p className="text-sm text-center max-w-md">
-              Your AI-powered portfolio intelligence platform. Multi-view roadmaps, financial
-              coordination, governance, and universal data ingestion — all in one place.
-            </p>
-            <div className="flex gap-3 mt-4">
-              <button
-                className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium text-white transition-colors"
-                style={{ backgroundColor: 'var(--color-primary)' }}
-              >
-                <Zap size={16} />
-                Start Onboarding
-              </button>
-              <button
-                className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors"
-                style={{
-                  backgroundColor: 'var(--color-surface-raised)',
-                  color: 'var(--color-text-secondary)',
-                }}
-              >
-                Import Data Pack
-              </button>
+        <div className="flex-1 overflow-hidden">
+          {currentView === 'GANTT' && (
+            <GanttView
+              projects={ganttProjects}
+              zoomLevel={zoomLevel}
+              onZoomChange={(z) => setZoomLevel(z as ZoomLevel)}
+              onTaskUpdate={(projectId, taskId, updates) => {
+                console.log('Task update:', { projectId, taskId, updates });
+              }}
+            />
+          )}
+
+          {currentView === 'SUBWAY' && (
+            <SubwayView
+              routes={subwayRoutes}
+              stationTypes={stationTypes}
+              onStopUpdate={(routeId, laneId, stopId, updates) => {
+                console.log('Stop update:', { routeId, laneId, stopId, updates });
+              }}
+              onStopAdd={(routeId, laneId, stop) => {
+                console.log('Stop add:', { routeId, laneId, stop });
+              }}
+              onRouteAdd={(route) => {
+                console.log('Route add:', route);
+              }}
+              onRouteDelete={(routeId) => {
+                console.log('Route delete:', routeId);
+              }}
+              onTypeAdd={(type) => {
+                console.log('Type add:', type);
+                setStationTypes((prev) => [
+                  ...prev,
+                  { ...type, id: type.label.toLowerCase().replace(/\s+/g, '') } as any,
+                ]);
+              }}
+              onTypeDelete={(typeId) => {
+                console.log('Type delete:', typeId);
+                setStationTypes((prev) => prev.filter((t) => t.id !== typeId));
+              }}
+            />
+          )}
+
+          {currentView !== 'GANTT' && currentView !== 'SUBWAY' && (
+            <div className="flex flex-col items-center justify-center h-full gap-4 p-6"
+              style={{ color: 'var(--color-text-muted)' }}
+            >
+              <Bot size={64} strokeWidth={1} style={{ color: 'var(--color-primary)' }} />
+              <h3 className="text-xl font-semibold" style={{ color: 'var(--color-text)' }}>
+                {NAV_ITEMS.find((i) => i.id === currentView)?.label}
+              </h3>
+              <p className="text-sm text-center max-w-md">
+                This module will be available in a future phase. Switch to Gantt or Subway view
+                to see the roadmap visualization.
+              </p>
             </div>
-          </div>
+          )}
         </div>
       </main>
     </div>
