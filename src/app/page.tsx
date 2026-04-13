@@ -19,6 +19,9 @@ import { generateMockGanttData } from '@/lib/adapters/ganttAdapter';
 import { generateMockSubwayData, DEFAULT_STATION_TYPES } from '@/lib/adapters/subwayAdapter';
 import type { ZoomLevel } from '@/constants/gantt';
 import AssistantPanel from '@/components/AI/AssistantPanel';
+import CoordinatorDashboard from '@/components/Financial/CoordinatorDashboard';
+import DataImport from '@/components/Financial/DataImport';
+import VarianceAlerts from '@/components/Financial/VarianceAlerts';
 
 type ViewMode =
   | 'GANTT'
@@ -288,7 +291,55 @@ export default function DashboardPage() {
             />
           )}
 
-          {currentView !== 'GANTT' && currentView !== 'SUBWAY' && (
+          {currentView === 'COORDINATOR' && (
+            <div className="p-6 overflow-auto h-full">
+              <CoordinatorDashboard
+                summary={{
+                  totalBudget: 8500000,
+                  totalSpent: 3200000,
+                  remaining: 5300000,
+                  activeAlerts: 5,
+                }}
+                healthStatus="healthy"
+                recentAlerts={[
+                  { id: '1', severity: 'critical', message: 'Resource over-allocated: Sarah Johnson at 140%' },
+                  { id: '2', severity: 'high', message: 'Project "Platform Modernization" 15% over budget' },
+                  { id: '3', severity: 'medium', message: 'Schedule variance: Cloud Migration delayed 8 days' },
+                ]}
+                onNavigate={(target) => {
+                  if (target === 'import') setCurrentView('COORDINATOR');
+                  console.log('Navigate to:', target);
+                }}
+              />
+            </div>
+          )}
+
+          {currentView === 'RESOURCES' && (
+            <div className="p-6 overflow-auto h-full">
+              <DataImport
+                onImport={async (type, file) => { console.log('Import:', type, file?.name); return { success: true, recordsProcessed: 0, recordsImported: 0, recordsFailed: 0, errors: [], warnings: [] }; }}
+                onAIImport={async (file) => { console.log('AI Import:', file?.name); return { success: true, recordsProcessed: 0, recordsImported: 0, recordsFailed: 0, errors: [], warnings: [] }; }}
+                onDownloadTemplate={(type) => console.log('Download template:', type)}
+              />
+            </div>
+          )}
+
+          {currentView === 'REPORTING' && (
+            <div className="p-6 overflow-auto h-full">
+              <VarianceAlerts
+                alerts={[
+                  { id: '1', alert_type: 'commitment', severity: 'critical', entity_type: 'resource', entity_id: 'r1', message: 'Sarah Johnson allocated 140% — over capacity by 32 hours this sprint', details: '{}', variance_amount: 32, variance_percent: 40, acknowledged: false, acknowledged_at: undefined, created_at: new Date(Date.now() - 3600000).toISOString() },
+                  { id: '2', alert_type: 'cost', severity: 'high', entity_type: 'project', entity_id: 'p1', message: 'Platform Modernization actual costs exceed forecast by $127,000 NZD', details: '{}', variance_amount: 127000, variance_percent: 15.3, acknowledged: false, acknowledged_at: undefined, created_at: new Date(Date.now() - 7200000).toISOString() },
+                  { id: '3', alert_type: 'schedule', severity: 'medium', entity_type: 'project', entity_id: 'p3', message: 'Cloud Migration behind schedule — 8 working days behind forecast', details: '{}', variance_amount: 8, variance_percent: 12, acknowledged: false, acknowledged_at: undefined, created_at: new Date(Date.now() - 86400000).toISOString() },
+                  { id: '4', alert_type: 'effort', severity: 'low', entity_type: 'feature', entity_id: 'f1', message: 'API Gateway feature actual effort 5% above estimate', details: '{}', variance_amount: 12, variance_percent: 5, acknowledged: true, acknowledged_at: new Date().toISOString(), created_at: new Date(Date.now() - 172800000).toISOString() },
+                ]}
+                onAcknowledge={(id) => console.log('Acknowledge:', id)}
+                onExplainWithAI={async (alert) => `This ${alert.alert_type} variance of ${(alert.variance_percent ?? 0).toFixed(1)}% is triggered because the actual values exceed the configured threshold. Recommended action: review the allocation and adjust the forecast.`}
+              />
+            </div>
+          )}
+
+          {(currentView === 'GOVERNANCE' || currentView === 'SETTINGS') && (
             <div className="flex flex-col items-center justify-center h-full gap-4 p-6"
               style={{ color: 'var(--color-text-muted)' }}
             >
@@ -297,8 +348,8 @@ export default function DashboardPage() {
                 {NAV_ITEMS.find((i) => i.id === currentView)?.label}
               </h3>
               <p className="text-sm text-center max-w-md">
-                This module will be available in a future phase. Switch to Gantt or Subway view
-                to see the roadmap visualization.
+                This module is coming in a future phase. The foundation is already built —
+                database schema, services, and types are ready.
               </p>
             </div>
           )}
