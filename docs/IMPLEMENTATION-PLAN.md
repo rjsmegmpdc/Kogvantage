@@ -1,223 +1,185 @@
-# Kogvantage — Implementation Plan
+# Kogvantage — Implementation Status & Remaining Work
 
-**Version:** 1.0
-**Date:** 13 April 2026
-**Timeline:** 12 weeks (10 phases)
-**Platform:** Next.js 15 on VPS (Docker + Caddy)
+**Repo:** https://github.com/rjsmegmpdc/Kogvantage
+**Commits:** 13 | **Files:** 139 | **Source:** 86 TypeScript | **Lines:** 25,794
 
 ---
 
-## Current Status
+## COMPLETED
 
-### Completed (Phases 1, 3, 4, 5, 7)
+### Core Platform
+| What | Files | Status |
+|---|:---:|:---:|
+| Next.js 15 scaffold + config + Docker | 8 | Done |
+| SQLite schema (25 tables, v2 with snapshots) | 1 | Done |
+| Unified types (core, RBAC, codewords, coordinator) | 4 | Done |
+| tRPC server (9 sub-routers, 50+ procedures) | 10 | Done |
+| Database seed script (147 records, 13 tables) | 1 | Done |
 
-| Phase | What Was Built | Files | Status |
-|---|---|---|---|
-| **1. Scaffold** | Next.js 15 project, SQLite schema (25 tables, 15 indexes), unified types (core, RBAC, codewords, coordinator), Docker deployment, Caddy config, 13 CSV templates, test fixtures | 34 | Done |
-| **3. Gantt View** | 4 components ported from Gemini-Roadmap: GanttView (drag/drop), TaskBars (SVG bars), TimelineHeader (dual-tier), DependencyLines (Bezier). 5-level zoom, ganttAdapter mock data | 5 | Done |
-| **4. Subway View** | 7 components decomposed from 1,297-line monolith: SubwayView, SubwayCanvas, StationMarker (6 shapes), StationTooltip, StationEditModal, AddStationModal, SubwayLegend. subwayAdapter mock data | 8 | Done |
-| **5. Financial Coordinator** | 5 import services (Timesheet, Actuals, LabourRates, Resource, FinanceLedger), tRPC router (projects, tasks, settings, coordinator), 3 UI components (CoordinatorDashboard, DataImport, VarianceAlerts) | 17 | Done |
-| **7. AI Integration** | ClaudeService (9 methods via @anthropic-ai/sdk), AssistantPanel (chat UI with quick actions), 8 Cowork SKILL.md files | 10 | Done |
+### Visualization (Dual-View)
+| What | Files | Status |
+|---|:---:|:---:|
+| Gantt View (SVG bars, 5 zoom levels, drag/drop, dependencies) | 4 | Done |
+| Subway View (7 components, 6 shapes, merge paths, dimming) | 7 | Done |
+| View switcher (Gantt ↔ Subway toggle) | 1 | Done |
+| Data adapters + mock data generators | 4 | Done |
+| usePortfolioData + usePortfolioMutations hooks (real tRPC data) | 2 | Done |
 
-**Total files created:** 74
-**Build status:** Passing (Next.js production build)
-**Git commits:** 4
+### Financial Coordinator
+| What | Files | Status |
+|---|:---:|:---:|
+| 5 import services (Timesheet, Actuals, Rates, Resources, Ledger) | 6 | Done |
+| CoordinatorDashboard, DataImport, VarianceAlerts UI | 3 | Done |
+| 17 coordinator tRPC procedures | 1 | Done |
 
----
+### AI Integration
+| What | Files | Status |
+|---|:---:|:---:|
+| ClaudeService (10 methods: chat, analyze, WBS, variance, effort, report, query, comparison) | 1 | Done |
+| AssistantPanel (chat sidebar with quick actions) | 1 | Done |
+| 6 AI tRPC procedures | 1 | Done |
+| 8 Cowork SKILL.md files | 8 | Done |
 
-## Remaining Phases
+### Stakeholder Dashboard & Reports
+| What | Files | Status |
+|---|:---:|:---:|
+| StakeholderDashboard (main layout, auto-refresh 30s) | 1 | Done |
+| 6 Recharts: HealthGauge, BudgetVsActuals, BurnRateTrend, StatusDistribution, ResourceUtilization, AlertsTimeline | 6 | Done |
+| KPICards (6 cards with sparklines) | 1 | Done |
+| AIInsightsPanel (proactive AI observations) | 1 | Done |
+| AI Query Engine (AIQueryBar, QueryResults with dynamic charts, QueryHistory) | 3 | Done |
+| Live Presentation Mode (full-screen, keyboard nav, auto-advance, export PPTX) | 3 | Done |
+| Comparison Engine (SnapshotService, ComparisonService, ComparisonView, AI narrative) | 3 | Done |
+| Corporate Templates (TemplateService, TemplateEditor, TemplateList) | 3 | Done |
+| PPTX Generator (6-slide deck, template-aware) | 1 | Done |
+| DOCX Generator (weekly + monthly, template-aware) | 1 | Done |
+| ReportDataService (portfolio snapshot queries) | 1 | Done |
+| PresentationBuilder (snapshot → slides) | 1 | Done |
 
-### Phase 2: Onboarding Wizard (Week 5)
+### Data Ingestion
+| What | Files | Status |
+|---|:---:|:---:|
+| Universal Ingestor (auto-detect 6 data types, fuzzy column matching) | 1 | Done |
+| Data Transformer (date/currency/name normalization) | 1 | Done |
+| Import Agent CLI (reads XLSX/CSV, anonymizes, imports) | 1 | Done |
+| Anonymizer (deterministic name/email/ID replacement) | 1 | Done |
+| DataPackUploader UI (drag-drop, analysis results) | 1 | Done |
+| GapAnalysis UI (found/missing/warnings display) | 1 | Done |
 
-**Goal:** Guide first-time users through complete platform setup.
+### Security & Settings
+| What | Files | Status |
+|---|:---:|:---:|
+| RBAC types (6 roles, permission matrix) | 1 | Done |
+| Codeword types (categories, encryption config) | 1 | Done |
+| CodewordManager UI | 1 | Done |
+| SettingsView (5 tabs: General, Security, Integrations, Templates, Data) | 1 | Done |
+| Onboarding Wizard (8 steps) | 1 | Done |
 
-**Tasks:**
-- [ ] `src/components/Onboarding/OnboardingWizard.tsx` — 8-step multi-step form
-- [ ] Step 1: Role setup (Admin/PM/Financial/Stakeholder)
-- [ ] Step 2: Org profile (name, logo upload, brand colors, currency, fiscal year, date format)
-- [ ] Step 3: Data source connections (SAP, Jira, ADO, ServiceNow — card-based selector)
-- [ ] Step 4: "Drop your data pack" file upload zone
-- [ ] Step 5: Governance template upload (PPTX/DOCX/XLSX)
-- [ ] Step 6: Security config (codewords, RBAC roles for team)
-- [ ] Step 7: Default view preference (Gantt vs Subway preview)
-- [ ] Step 8: AI assistant demo chat
-- [ ] Resume-safe: each step saves to `app_settings` table
-- [ ] Redirect logic: if `onboarding_complete = false`, show wizard instead of dashboard
-- [ ] "Re-run Setup Wizard" button in Settings
-
-**Verify:** Fresh app → wizard completes all steps → dashboard shows imported data
-
----
-
-### Phase 6: Universal Data Ingestion Engine (Week 6-7)
-
-**Goal:** AI-powered "drop anything" import that replaces manual CSV field mapping.
-
-**Tasks:**
-- [ ] `src/server/services/ingestion/UniversalIngestor.ts` — orchestrates file scanning, type detection, mapping
-- [ ] `src/server/services/ingestion/DataTransformer.ts` — date normalization, currency conversion, name deduplication
-- [ ] `src/server/services/ingestion/ImageScraper.ts` — Claude Vision for table extraction from screenshots/PDFs
-- [ ] `src/components/Ingestion/DataPackUploader.tsx` — drag-drop zone for folders/ZIPs/multi-file
-- [ ] `src/components/Ingestion/GapAnalysis.tsx` — displays AI gap report (found/missing/ambiguous)
-- [ ] `src/components/Ingestion/FieldMapper.tsx` — manual override for column mapping
-- [ ] `src/server/trpc/ingestion.ts` — tRPC procedures for upload, analyze, transform, import
-- [ ] Support formats: CSV, XLSX (via SheetJS), JSON, PDF (text extraction), images (Claude Vision)
-- [ ] Fuzzy column matching: "Emp No" → personnel_number, "Hrs" → hours
-- [ ] Date format auto-detection: DD-MM-YYYY, MM/DD/YYYY, YYYY-MM-DD, "January 15, 2025"
-
-**Verify:** Drop a folder with mixed CSVs + a dashboard screenshot → AI identifies all files, maps columns, reports gaps, imports valid data
-
----
-
-### Phase 8: Governance Templates + Codewords UI (Week 8-9)
-
-**Goal:** Organizations upload their report templates; AI learns and reproduces the style. Codeword system protects sensitive data.
-
-**Tasks:**
-
-#### Governance Templates
-- [ ] `src/server/services/TemplateService.ts` — analyze uploaded template, extract style profile
-- [ ] `src/components/Modules/TemplateManager.tsx` — upload UI, template list, preview
-- [ ] Template analysis: extract colors (hex), fonts, section headers, language tone
-- [ ] Store as `governance_templates` row with TemplateProfile
-- [ ] Report generation: AI produces content matching org style
-- [ ] Support PPTX (via pptxgenjs), DOCX (via docx), XLSX (via SheetJS)
-
-#### Codeword System
-- [ ] `src/server/services/security/CodewordService.ts` — CRUD, encryption, filtering
-- [ ] `src/components/Security/CodewordManager.tsx` — add/edit/delete codeword mappings
-- [ ] `src/components/Security/CodewordFilter.tsx` — React context provider for display filtering
-- [ ] `src/hooks/useCodewordFilter.ts` — hook to filter text, dates, amounts per user role
-- [ ] Date shifting: configurable ±N days offset
-- [ ] Financial masking: exact / range / percentage / hidden
-- [ ] "See as [Role]" preview button for admins
-- [ ] Bulk import codewords from CSV
-- [ ] AI awareness: Claude uses codewords in responses for restricted roles
-
-**Verify:** Upload a PPTX → AI extracts style → generate matching report. Create codeword → switch to Stakeholder view → real names replaced.
+### Infrastructure
+| What | Files | Status |
+|---|:---:|:---:|
+| Health endpoint (/api/health) | 1 | Done |
+| Toast notification system | 1 | Done |
+| Loading skeletons | 1 | Done |
+| CSS animations (pulse, slideIn, fadeIn) | 1 | Done |
+| Playwright E2E tests (40 passing, 6 test files) | 7 | Done |
+| 5 CSV test fixtures (valid + invalid) | 5 | Done |
+| 13 CSV import templates | 13 | Done |
+| Docker + Caddy deployment config | 3 | Done |
+| PRD + Implementation Plan + README | 3 | Done |
 
 ---
 
-### Phase 9: API & MCP Integrations (Week 9-10)
+## REMAINING — What's Left to Build
 
-**Goal:** Connect to external systems for bi-directional data sync.
-
-**Tasks:**
-- [ ] `src/server/trpc/integrations.ts` — CRUD for integration configs
-- [ ] `src/components/Modules/IntegrationsManager.tsx` — settings UI with connection cards
-- [ ] Azure DevOps connector: work item sync, webhook receiver (`/api/webhooks/ado`)
-- [ ] Jira connector: issue/epic sync via REST API
-- [ ] ServiceNow connector: incident/change sync
-- [ ] Google Calendar integration (via existing MCP)
-- [ ] Gmail integration (via existing MCP)
-- [ ] Field mapping UI per integration (source field → Kogvantage field)
-- [ ] Sync scheduling: manual, daily, weekly
-- [ ] Connection test button with status indicator
-- [ ] Webhook receiver for ADO/Jira push events
-
-**Verify:** Configure ADO connection → pull work items → appear as epics/features in roadmap
-
----
-
-### Phase 10: Documentation + Polish + Packaging (Week 11-12)
-
-**Goal:** Production-ready release with comprehensive docs, tests, and deployment.
-
-**Tasks:**
-
-#### Documentation (9 files)
-- [ ] `docs/USER-GUIDE.md` — end-user walkthrough
-- [ ] `docs/ADMIN-GUIDE.md` — setup, RBAC, codewords, integrations
-- [ ] `docs/DATA-INGESTION.md` — supported formats, mapping rules, troubleshooting
-- [ ] `docs/AI-CAPABILITIES.md` — all 16 AI features with examples
-- [ ] `docs/API-INTEGRATIONS.md` — ADO, Jira, ServiceNow setup guides
-- [ ] `docs/GOVERNANCE-TEMPLATES.md` — template upload and report generation
-- [ ] `docs/SECURITY.md` — encryption, codewords, RBAC, date shifting
-- [ ] `docs/COWORK-SKILLS.md` — how to use Cowork for automation
-- [ ] `docs/ONBOARDING.md` — wizard walkthrough with screenshots
-
-#### Testing
-- [ ] Vitest unit tests for adapters, services, tRPC procedures
-- [ ] Playwright E2E: onboard → import → Gantt → Subway → financials → AI chat
-- [ ] Test fixtures: expand CSV samples for all import types (valid + invalid)
-- [ ] Error boundary testing for all views
-
-#### Polish
-- [ ] Loading states and skeleton screens for all views
-- [ ] Error boundaries with recovery UI
-- [ ] Toast notification system
-- [ ] Keyboard shortcuts (Cmd+1 = Gantt, Cmd+2 = Subway, etc.)
-- [ ] Responsive design for tablet viewport
-
-#### Packaging
-- [ ] Docker multi-stage build optimization
-- [ ] Production environment variables documentation
-- [ ] Health check endpoint (`/api/health`)
-- [ ] Database backup/restore scripts
-- [ ] GitHub Actions CI/CD pipeline
-
-**Verify:** Full E2E: onboard → import data pack → Gantt + Subway → import financials → AI report → codeword-filtered export → Docker deploy on VPS
-
----
-
-## Architecture Diagram
-
-```
-                    +------------------+
-                    |   Caddy (HTTPS)  |
-                    +--------+---------+
-                             |
-                    +--------v---------+
-                    |   Next.js 15     |
-                    |   App Router     |
-                    +--------+---------+
-                             |
-              +--------------+--------------+
-              |                             |
-    +---------v---------+       +-----------v-----------+
-    |   React 19 (SSR)  |       |   tRPC API Routes     |
-    |   - Gantt View    |       |   - projects.*        |
-    |   - Subway View   |       |   - tasks.*           |
-    |   - Financial UI  |       |   - coordinator.*     |
-    |   - AI Panel      |       |   - settings.*        |
-    |   - Onboarding    |       |   - ai.*              |
-    +-------------------+       |   - ingestion.*       |
-                                +-----------+-----------+
-                                            |
-                         +------------------+------------------+
-                         |                                     |
-               +---------v---------+              +------------v-----------+
-               |   SQLite (OLTP)   |              |   DuckDB (OLAP)       |
-               |   25+ tables      |              |   Financial analytics  |
-               |   WAL mode        |              |   Columnar queries     |
-               +-------------------+              +------------------------+
-                                     \
-                               +------v-------+
-                               |  Claude API  |
-                               |  (Sonnet)    |
-                               +--------------+
-```
-
----
-
-## Risk Register
-
-| # | Risk | Likelihood | Impact | Mitigation | Owner |
-|---|---|---|---|---|---|
-| 1 | Subway decomposition rendering bugs | Medium | High | Snapshot tests comparing SVG output | Dev |
-| 2 | Claude API cost at scale | Medium | Medium | Query caching, BYOK for multi-tenant | Arch |
-| 3 | SQLite write contention | Low | Medium | WAL mode, DuckDB for reads | Arch |
-| 4 | Governance scope creep | High | Medium | Phased delivery, parked until core stable | PM |
-| 5 | PPTX/DOCX generation quality | Medium | Medium | Validate with real org templates | Dev |
-| 6 | Multi-tenant data isolation | Low | Critical | Separate SQLite files per tenant | Security |
-
----
-
-## Milestones
-
-| Milestone | Target | Definition of Done |
+### Priority 1: Auth & Login (Required for Production)
+| Task | Effort | Why |
 |---|---|---|
-| **MVP** | Week 5 | Gantt + Subway + Financial import + AI chat working end-to-end |
-| **Beta** | Week 8 | Onboarding wizard + data ingestion + governance templates |
-| **RC1** | Week 10 | All integrations + codewords + RBAC functional |
-| **v1.0** | Week 12 | Full docs + E2E tests + Docker deployment on VPS |
+| NextAuth credential provider config (`src/lib/auth.ts`) | Quick | RBAC is just types without auth enforcement |
+| Login page (`src/app/login/page.tsx`) | Quick | Users need to sign in |
+| Session provider wrapper in layout.tsx | Quick | Wraps app with auth context |
+| Protect tRPC routes with `protectedProcedure` | Medium | Switch from publicProcedure → role-checked |
+| Middleware for route protection (`src/middleware.ts`) | Quick | Redirect unauthenticated to login |
+| Wire CodewordFilter to session role | Quick | Codewords filter based on logged-in user's role |
+
+### Priority 2: VPS Deployment (Required for Remote Access)
+| Task | Effort | Why |
+|---|---|---|
+| Provision VPS (Hetzner/Vultr, $5-10/mo) | Quick | Need a server |
+| Configure domain + DNS | Quick | Point domain to VPS IP |
+| Deploy Docker containers (app + Caddy) | Quick | Dockerfile + docker-compose already built |
+| Configure .env.production | Quick | API keys, secrets, NEXTAUTH_URL |
+| Seed production database | Quick | Run `npm run db:seed` or `npm run db:import` |
+| Set up SSH key access | Quick | For updates and maintenance |
+
+### Priority 3: Real API Integrations
+| Task | Effort | Why |
+|---|---|---|
+| Azure DevOps connector (real REST API calls) | 1 session | Pull work items into projects/epics |
+| ADO webhook receiver (real event processing) | Medium | Real-time sync from ADO |
+| Jira connector (REST API) | 1 session | Pull issues/epics/sprints |
+| ServiceNow connector (REST API) | 1 session | Pull incidents/changes |
+| Field mapping UI (per integration) | Medium | Map source fields to Kogvantage schema |
+| Sync scheduling (cron-based daily/weekly) | Medium | Automated data refresh |
+
+### Priority 4: Polish & Production Hardening
+| Task | Effort | Why |
+|---|---|---|
+| Error boundaries on all views | Quick | Prevent white-screen crashes |
+| Responsive design (tablet breakpoints) | Medium | Mobile/tablet access |
+| Keyboard shortcuts (Cmd+1=Gantt, Cmd+2=Subway, etc.) | Quick | Power user productivity |
+| DuckDB analytics wiring (P&L queries) | Medium | Faster financial aggregations |
+| Rate limiting on AI endpoints | Quick | Prevent API cost overruns |
+| PPTX/DOCX template application (wire to generators) | Medium | Reports use saved corporate template |
+| Unit tests for services (Vitest) | 1 session | Service-level test coverage |
+| Update E2E tests for new dashboard/presentation views | Medium | Test coverage for new features |
+
+### Priority 5: Documentation
+| Task | Effort | Why |
+|---|---|---|
+| docs/USER-GUIDE.md | Medium | End-user walkthrough |
+| docs/ADMIN-GUIDE.md | Medium | Setup, RBAC, codewords |
+| docs/DATA-INGESTION.md | Quick | Supported formats, mapping |
+| docs/AI-CAPABILITIES.md | Quick | All AI features with examples |
+| docs/API-INTEGRATIONS.md | Medium | ADO, Jira, ServiceNow setup |
+| docs/GOVERNANCE-TEMPLATES.md | Quick | Template upload + report gen |
+| docs/SECURITY.md | Quick | Encryption, codewords, RBAC |
+| docs/COWORK-SKILLS.md | Quick | Cowork automation guide |
+| docs/ONBOARDING.md | Quick | Wizard walkthrough |
+
+---
+
+## RECOMMENDED NEXT SESSION ORDER
+
+| # | What | Effort | Impact |
+|---|---|---|---|
+| 1 | **Auth + Login page** | 1 session | RBAC actually enforced, multi-user ready |
+| 2 | **VPS Deployment** | 1 session | Live on the internet, accessible anywhere |
+| 3 | **ADO Connector** | 1 session | Pull real work items from Azure DevOps |
+| 4 | **Template → Generator wiring** | Quick | Corporate branded reports actually work |
+| 5 | **Full documentation** (9 files) | 1 session | Production-ready docs |
+| 6 | **Unit tests + E2E updates** | 1 session | Comprehensive test coverage |
+
+---
+
+## Quick Reference
+
+```bash
+# Run locally
+npm run dev                    # http://localhost:3000
+
+# Seed database
+npm run db:seed                # 147 demo records
+npm run db:import <file>       # Import XLSX/CSV with anonymization
+
+# Tests
+npm run test:e2e               # 40 Playwright tests
+
+# Build
+npm run build                  # Production build
+
+# Deploy
+cd docker && docker-compose up -d
+```
+
+**Admin login:** admin@kogvantage.local / admin123
