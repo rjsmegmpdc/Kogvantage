@@ -1,0 +1,19 @@
+// ============================================================
+// KOGVANTAGE — Root tRPC Router
+// Merges all sub-routers and exports the AppRouter type
+// ============================================================
+
+import { router } from './init';
+import { projectsRouter } from './projects';
+import { tasksRouter } from './tasks';
+import { settingsRouter } from './settings';
+import { coordinatorRouter } from './coordinator';
+
+export const appRouter = router({
+  projects: projectsRouter,
+  tasks: tasksRouter,
+  settings: settingsRouter,
+  coordinator: coordinatorRouter,
+});
+
+export type AppRouter = typeof appRouter;

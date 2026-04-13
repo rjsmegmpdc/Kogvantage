@@ -18,6 +18,7 @@ import SubwayView from '@/components/Subway/SubwayView';
 import { generateMockGanttData } from '@/lib/adapters/ganttAdapter';
 import { generateMockSubwayData, DEFAULT_STATION_TYPES } from '@/lib/adapters/subwayAdapter';
 import type { ZoomLevel } from '@/constants/gantt';
+import AssistantPanel from '@/components/AI/AssistantPanel';
 
 type ViewMode =
   | 'GANTT'
@@ -52,6 +53,7 @@ export default function DashboardPage() {
   const ganttProjects = useMemo(() => generateMockGanttData(), []);
   const subwayRoutes = useMemo(() => generateMockSubwayData(), []);
   const [stationTypes, setStationTypes] = useState(DEFAULT_STATION_TYPES);
+  const [aiPanelOpen, setAiPanelOpen] = useState(false);
 
   return (
     <div className="flex h-screen overflow-hidden">
@@ -230,10 +232,11 @@ export default function DashboardPage() {
 
           <div className="flex items-center gap-3">
             <button
+              onClick={() => setAiPanelOpen(!aiPanelOpen)}
               className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-medium transition-colors"
               style={{
-                backgroundColor: 'var(--color-surface-raised)',
-                color: 'var(--color-text-secondary)',
+                backgroundColor: aiPanelOpen ? 'var(--color-primary)15' : 'var(--color-surface-raised)',
+                color: aiPanelOpen ? 'var(--color-primary-light)' : 'var(--color-text-secondary)',
               }}
             >
               <Zap size={14} style={{ color: 'var(--color-warning)' }} />
@@ -301,6 +304,9 @@ export default function DashboardPage() {
           )}
         </div>
       </main>
+
+      {/* AI Assistant Panel */}
+      <AssistantPanel isOpen={aiPanelOpen} onClose={() => setAiPanelOpen(false)} />
     </div>
   );
 }
