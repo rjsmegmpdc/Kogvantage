@@ -1,0 +1,21 @@
+Stream,Month,Name,Personnel Number,Date,Activity Type,WBSE,Hours
+BTE Tribe,Jan-2025,Sarah Johnson,EMP001,06-01-2025,N3_CAP,IT\BTE Tribe\Integration,7.5
+BTE Tribe,Jan-2025,Sarah Johnson,EMP001,07-01-2025,N3_CAP,IT\BTE Tribe\Integration,8.0
+BTE Tribe,Jan-2025,Mike Chen,EMP002,06-01-2025,N4_OPX,IT\BTE Tribe\Platform,8.0
+BTE Tribe,Jan-2025,Mike Chen,EMP002,07-01-2025,N4_OPX,IT\BTE Tribe\Platform,7.5
+BTE Tribe,Jan-2025,Emma Wilson,EMP003,06-01-2025,N2_CAP,IT\BTE Tribe\Security,6.0
+BTE Tribe,Jan-2025,Emma Wilson,EMP003,07-01-2025,N2_CAP,IT\BTE Tribe\Security,8.0
+BTE Tribe,Feb-2025,Sarah Johnson,EMP001,03-02-2025,N3_CAP,IT\BTE Tribe\Integration,8.0
+BTE Tribe,Feb-2025,Sarah Johnson,EMP001,04-02-2025,N3_CAP,IT\BTE Tribe\Integration,7.0
+BTE Tribe,Feb-2025,Mike Chen,EMP002,03-02-2025,N4_OPX,IT\BTE Tribe\Platform,8.0
+BTE Tribe,Feb-2025,Mike Chen,EMP002,04-02-2025,N4_OPX,IT\BTE Tribe\Platform,8.0
+EUC,Jan-2025,David Brown,EMP004,06-01-2025,N3_CAP,IT\EUC\Device Mgmt,7.5
+EUC,Jan-2025,David Brown,EMP004,07-01-2025,N3_CAP,IT\EUC\Device Mgmt,8.0
+EUC,Jan-2025,Lisa Martinez,EMP005,06-01-2025,N5_OPX,IT\EUC\Support,4.0
+EUC,Jan-2025,Lisa Martinez,EMP005,07-01-2025,N5_OPX,IT\EUC\Support,6.0
+Security,Jan-2025,Alex Taylor,EMP006,06-01-2025,N4_CAP,IT\Security\SecOps,8.0
+Security,Jan-2025,Alex Taylor,EMP006,07-01-2025,N4_CAP,IT\Security\SecOps,8.0
+Security,Feb-2025,Alex Taylor,EMP006,03-02-2025,N4_CAP,IT\Security\SecOps,7.5
+Security,Feb-2025,Alex Taylor,EMP006,04-02-2025,N4_CAP,IT\Security\SecOps,8.0
+Identity,Jan-2025,Chris Lee,EMP007,06-01-2025,N3_OPX,IT\Identity\Zero Trust,8.0
+Identity,Jan-2025,Chris Lee,EMP007,07-01-2025,N3_OPX,IT\Identity\Zero Trust,7.0

@@ -1,0 +1,9 @@
+Stream,Month,Name,Personnel Number,Date,Activity Type,WBSE,Hours
+BTE Tribe,Jan-2025,Sarah Johnson,EMP001,06-01-2025,N3_CAP,IT\BTE Tribe\Integration,25.0
+BTE Tribe,Jan-2025,,EMP002,07-01-2025,N4_OPX,IT\BTE Tribe\Platform,8.0
+BTE Tribe,Jan-2025,Mike Chen,EMP002,32-01-2025,N4_OPX,IT\BTE Tribe\Platform,7.5
+BTE Tribe,Jan-2025,Emma Wilson,EMP003,06-01-2025,INVALID_TYPE,IT\BTE Tribe\Security,6.0
+BTE Tribe,Feb-2025,Sarah Johnson,EMP001,2025-02-03,N3_CAP,IT\BTE Tribe\Integration,8.0
+BTE Tribe,Feb-2025,Mike Chen,,03-02-2025,N4_OPX,IT\BTE Tribe\Platform,-3.0
+EUC,Jan-2025,David Brown,EMP004,06-01-2025,N3_CAP,,7.5
+EUC,Jan-2025,Lisa Martinez,EMP005,06/01/2025,N5_OPX,IT\EUC\Support,abc

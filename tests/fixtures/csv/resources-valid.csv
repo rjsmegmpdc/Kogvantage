@@ -1,0 +1,11 @@
+Name,Email,Work Area,Activity Type CAP,Activity Type OPX,Contract Type,Employee ID
+Sarah Johnson,sarah.johnson@company.co.nz,BTE Tribe,N3_CAP,N3_OPX,FTE,EMP001
+Mike Chen,mike.chen@company.co.nz,BTE Tribe,N4_CAP,N4_OPX,FTE,EMP002
+Emma Wilson,emma.wilson@company.co.nz,BTE Tribe,N2_CAP,N2_OPX,FTE,EMP003
+David Brown,david.brown@company.co.nz,EUC,N3_CAP,N3_OPX,FTE,EMP004
+Lisa Martinez,lisa.martinez@company.co.nz,EUC,N5_CAP,N5_OPX,SOW,EMP005
+Alex Taylor,alex.taylor@company.co.nz,Security,N4_CAP,N4_OPX,FTE,EMP006
+Chris Lee,chris.lee@company.co.nz,Identity,N3_CAP,N3_OPX,FTE,EMP007
+Jordan Park,jordan.park@external.com,AI Innovation,N4_CAP,N4_OPX,External Squad,EMP008
+Sam Rivera,sam.rivera@vendor.co.nz,Virtual Desktop,N3_CAP,N3_OPX,SOW,EMP009
+Morgan Kelly,morgan.kelly@company.co.nz,Org & People,N2_CAP,N2_OPX,FTE,EMP010
