@@ -24,6 +24,7 @@ import DataImport from '@/components/Financial/DataImport';
 import VarianceAlerts from '@/components/Financial/VarianceAlerts';
 import OnboardingWizard from '@/components/Onboarding/OnboardingWizard';
 import SettingsView from '@/components/Modules/SettingsView';
+import DataPackUploader from '@/components/Ingestion/DataPackUploader';
 
 type ViewMode =
   | 'GANTT'
@@ -339,10 +340,33 @@ export default function DashboardPage() {
 
           {currentView === 'RESOURCES' && (
             <div className="p-6 overflow-auto h-full">
-              <DataImport
-                onImport={async (type, file) => { console.log('Import:', type, file?.name); return { success: true, recordsProcessed: 0, recordsImported: 0, recordsFailed: 0, errors: [], warnings: [] }; }}
-                onAIImport={async (file) => { console.log('AI Import:', file?.name); return { success: true, recordsProcessed: 0, recordsImported: 0, recordsFailed: 0, errors: [], warnings: [] }; }}
-                onDownloadTemplate={(type) => console.log('Download template:', type)}
+              <DataPackUploader
+                onAnalyze={async (files) => {
+                  console.log('Analyzing', files.length, 'files');
+                  // Mock analysis result for now — will wire to tRPC ingestion.analyze
+                  return {
+                    files: files.map((f) => ({
+                      fileName: f.name,
+                      fileType: (f.name.endsWith('.csv') ? 'csv' : 'unknown') as any,
+                      detectedDataType: 'unknown' as any,
+                      rowCount: 0,
+                      columns: [],
+                      mappedColumns: {},
+                      confidence: 50,
+                      issues: [],
+                    })),
+                    gapReport: {
+                      found: ['File analysis complete'],
+                      missing: ['Connect to tRPC for full analysis'],
+                      warnings: [],
+                    },
+                    totalRecords: 0,
+                    importableRecords: 0,
+                  };
+                }}
+                onImport={async (result) => {
+                  console.log('Importing', result.files.length, 'files');
+                }}
               />
             </div>
           )}
