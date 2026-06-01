@@ -81,7 +81,7 @@ const AddStationModal: React.FC<AddStationModalProps> = ({
           }}
         >
           <h3 className="font-bold text-lg">Add New Station</h3>
-          <button onClick={onClose} style={{ color: colors.textMuted }}>
+          <button onClick={onClose} style={{ color: colors.textMuted }} aria-label="Close add station dialog" className="p-2 min-h-[44px] min-w-[44px] flex items-center justify-center">
             <X size={20} />
           </button>
         </div>

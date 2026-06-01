@@ -244,7 +244,7 @@ function AddCodewordForm({ onSubmit, onCancel }: AddFormProps) {
         <h4 className="text-sm font-semibold" style={{ color: 'var(--color-text)' }}>
           Add New Codeword
         </h4>
-        <button type="button" onClick={onCancel} className="p-1 rounded hover:opacity-80" style={{ color: 'var(--color-text-muted)' }}>
+        <button type="button" onClick={onCancel} className="p-2 rounded hover:opacity-80 min-h-[44px] min-w-[44px] flex items-center justify-center" style={{ color: 'var(--color-text-muted)' }} aria-label="Cancel adding codeword">
           <X size={16} />
         </button>
       </div>
@@ -698,12 +698,13 @@ export default function CodewordManager({
                   </button>
                   <button
                     onClick={() => onDelete(entry.id)}
-                    className="p-1.5 rounded-md transition-colors hover:opacity-80"
+                    className="p-2 rounded-md transition-colors hover:opacity-80 min-h-[44px] min-w-[44px] flex items-center justify-center"
                     style={{
                       backgroundColor: 'var(--color-surface-raised)',
                       color: 'var(--color-danger)',
                     }}
                     title="Delete"
+                    aria-label="Delete codeword"
                   >
                     <Trash2 size={13} />
                   </button>

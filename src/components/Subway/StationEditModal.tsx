@@ -74,7 +74,8 @@ const StationEditModal: React.FC<StationEditModalProps> = ({
             </div>
             <button
               onClick={onClose}
-              className="p-1 rounded hover:bg-black/5 dark:hover:bg-white/10 transition-colors opacity-50 hover:opacity-100"
+              className="p-2 rounded hover:bg-black/5 dark:hover:bg-white/10 transition-colors opacity-50 hover:opacity-100 min-h-[44px] min-w-[44px] flex items-center justify-center"
+              aria-label="Close station editor"
             >
               <X size={20} />
             </button>

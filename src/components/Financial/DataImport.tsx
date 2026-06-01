@@ -177,8 +177,9 @@ function DropZone({ onFileDrop, activeFile, onClearFile, disabled }: DropZonePro
         </div>
         <button
           onClick={onClearFile}
-          className="p-1 rounded-md transition-colors hover:bg-white/10"
+          className="p-2 rounded-md transition-colors hover:bg-white/10 min-h-[44px] min-w-[44px] flex items-center justify-center"
           style={{ color: 'var(--color-text-muted)' }}
+          aria-label="Clear selected file"
         >
           <X size={14} />
         </button>

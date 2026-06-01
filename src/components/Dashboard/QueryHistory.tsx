@@ -101,7 +101,7 @@ export default function QueryHistory({
         <h3 style={styles.title}>Query History</h3>
         <span style={styles.count}>{history.length}</span>
         <div style={{ flex: 1 }} />
-        <button onClick={onClear} style={styles.clearButton}>
+        <button onClick={onClear} style={styles.clearButton} aria-label="Clear query history">
           <Trash2 size={14} />
           <span>Clear history</span>
         </button>

@@ -767,12 +767,13 @@ function TemplatesTab() {
                 Analyze
               </button>
               <button
-                className="p-1.5 rounded-lg"
+                className="p-2 rounded-lg min-h-[44px] min-w-[44px] flex items-center justify-center"
                 style={{
                   backgroundColor: 'var(--color-surface-raised)',
                   color: 'var(--color-danger)',
                 }}
                 title="Delete"
+                aria-label="Delete template"
               >
                 <Trash2 size={13} />
               </button>

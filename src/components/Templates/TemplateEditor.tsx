@@ -131,7 +131,8 @@ export default function TemplateEditor({ template, onSave, onCancel }: TemplateE
         </h2>
         <button
           onClick={onCancel}
-          className="rounded-lg p-2 text-[var(--muted-foreground)] hover:bg-[var(--muted)] transition-colors"
+          className="rounded-lg p-2 text-[var(--muted-foreground)] hover:bg-[var(--muted)] transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center"
+          aria-label="Close editor"
         >
           <X size={18} />
         </button>

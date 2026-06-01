@@ -473,6 +473,7 @@ export default function DashboardPage() {
                 }}
                 onThemeChange={(t) => {
                   setTheme(t);
+                  setSettings((prev) => ({ ...prev, theme: t }));
                   document.documentElement.classList.remove('dark', 'light');
                   if (t !== 'system') document.documentElement.classList.add(t);
                 }}
