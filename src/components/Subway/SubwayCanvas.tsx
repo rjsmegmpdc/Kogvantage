@@ -109,7 +109,7 @@ const SubwayCanvas: React.FC<SubwayCanvasProps> = ({
           y={20}
           textAnchor="middle"
           fill={colors.todayLine}
-          className="text-[10px] font-bold uppercase tracking-widest"
+          className="text-xs font-bold uppercase tracking-widest"
         >
           Today
         </text>
@@ -130,7 +130,7 @@ const SubwayCanvas: React.FC<SubwayCanvasProps> = ({
                 y={25}
                 textAnchor="middle"
                 fill={isYear ? colors.text : colors.textMuted}
-                className={`text-[10px] ${isYear ? 'font-bold text-xs' : ''}`}
+                className={`text-xs ${isYear ? 'font-bold text-xs' : ''}`}
               >
                 {date.toLocaleDateString('en-US', {
                   month: 'short',

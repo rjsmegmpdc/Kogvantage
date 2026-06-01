@@ -237,7 +237,7 @@ export default function AIInsightsPanel({ insights: propInsights }: AIInsightsPa
                   {insight}
                 </p>
                 <button
-                  className="flex items-center gap-1 mt-2 text-[10px] font-medium transition-colors hover:opacity-80"
+                  className="flex items-center gap-1 mt-2 text-xs font-medium transition-colors hover:opacity-80"
                   style={{ color: INSIGHT_COLORS[idx % INSIGHT_COLORS.length] }}
                 >
                   Learn more

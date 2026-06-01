@@ -29,7 +29,7 @@ const SubwayLegend: React.FC<SubwayLegendProps> = ({
           <button
             key={item.id}
             onClick={() => onToggleFilter(item.id)}
-            className="flex items-center gap-1.5 px-2 py-1 rounded-full text-[10px] font-normal transition-all border whitespace-normal text-left leading-tight outline-none focus:ring-2 ring-blue-500/20 max-w-[100px]"
+            className="flex items-center gap-1.5 px-2 py-1 rounded-full text-xs font-normal transition-all border whitespace-normal text-left leading-tight outline-none focus:ring-2 ring-blue-500/20 max-w-[100px]"
             style={{
               backgroundColor: isActive
                 ? activeTheme === 'dark'

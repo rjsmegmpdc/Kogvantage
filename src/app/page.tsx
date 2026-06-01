@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import {
   BarChart3,
   Train,
@@ -9,7 +9,6 @@ import {
   Shield,
   FileText,
   Settings,
-  Bot,
   ChevronRight,
   Zap,
 } from 'lucide-react';
@@ -86,11 +85,37 @@ export default function DashboardPage() {
     auto_save: 'true',
   });
 
+  // Auto-collapse sidebar on mobile
+  useEffect(() => {
+    const mql = window.matchMedia('(max-width: 768px)');
+    const handler = (e: MediaQueryListEvent) => {
+      if (e.matches) setSidebarCollapsed(true);
+    };
+    mql.addEventListener('change', handler);
+    if (mql.matches) setSidebarCollapsed(true);
+    return () => mql.removeEventListener('change', handler);
+  }, []);
+
+  const projectCount = portfolio.ganttProjects.length || ganttProjects.length;
+  const healthPercent = portfolio.ganttProjects.length > 0
+    ? Math.round(portfolio.ganttProjects.reduce((acc, p) => acc + ((p as any).health ?? 72), 0) / portfolio.ganttProjects.length)
+    : 0;
+
   return (
     <div className="flex h-screen overflow-hidden">
+      <a href="#main-content" className="skip-link">Skip to content</a>
+
+      {/* Mobile backdrop when sidebar expanded */}
+      {!sidebarCollapsed && (
+        <div
+          className="fixed inset-0 z-40 bg-black/50 md:hidden"
+          onClick={() => setSidebarCollapsed(true)}
+        />
+      )}
+
       {/* Sidebar */}
       <aside
-        className="flex flex-col border-r transition-all duration-300"
+        className="flex flex-col border-r transition-all duration-300 fixed inset-y-0 left-0 z-50 md:relative md:z-auto"
         style={{
           width: sidebarCollapsed ? '64px' : '240px',
           backgroundColor: 'var(--color-surface)',
@@ -113,7 +138,7 @@ export default function DashboardPage() {
               <h1 className="text-sm font-bold" style={{ color: 'var(--color-text)' }}>
                 Kogvantage
               </h1>
-              <p className="text-[10px]" style={{ color: 'var(--color-text-muted)' }}>
+              <p className="text-xs" style={{ color: 'var(--color-text-muted)' }}>
                 Portfolio Intelligence
               </p>
             </div>
@@ -121,12 +146,12 @@ export default function DashboardPage() {
         </div>
 
         {/* Navigation */}
-        <nav className="flex-1 py-3 overflow-y-auto">
+        <nav className="flex-1 py-3 overflow-y-auto" role="navigation" aria-label="Main navigation">
           {['Roadmap', 'Finance', 'Governance', 'System'].map((category) => (
             <div key={category} className="mb-2">
               {!sidebarCollapsed && (
                 <p
-                  className="px-4 py-1 text-[10px] font-semibold uppercase tracking-wider"
+                  className="px-4 py-1 text-xs font-semibold uppercase tracking-wider"
                   style={{ color: 'var(--color-text-muted)' }}
                 >
                   {category}
@@ -136,7 +161,7 @@ export default function DashboardPage() {
                 <button
                   key={item.id}
                   onClick={() => setCurrentView(item.id)}
-                  className="flex items-center gap-3 w-full px-4 py-2.5 text-sm transition-colors"
+                  className="flex items-center gap-3 w-full px-4 py-3 text-sm transition-colors min-h-[44px]"
                   style={{
                     color:
                       currentView === item.id
@@ -149,6 +174,9 @@ export default function DashboardPage() {
                         ? '2px solid var(--color-primary)'
                         : '2px solid transparent',
                   }}
+                  aria-current={currentView === item.id ? 'page' : undefined}
+                  aria-label={item.label}
+                  title={sidebarCollapsed ? item.label : undefined}
                 >
                   {item.icon}
                   {!sidebarCollapsed && <span>{item.label}</span>}
@@ -165,7 +193,7 @@ export default function DashboardPage() {
             style={{ borderColor: 'var(--color-border)' }}
           >
             <p
-              className="text-[10px] font-semibold uppercase tracking-wider mb-2"
+              className="text-xs font-semibold uppercase tracking-wider mb-2"
               style={{ color: 'var(--color-text-muted)' }}
             >
               Portfolio Health
@@ -178,8 +206,8 @@ export default function DashboardPage() {
                 <div
                   className="h-full rounded-full transition-all"
                   style={{
-                    width: '72%',
-                    backgroundColor: 'var(--color-success)',
+                    width: `${healthPercent}%`,
+                    backgroundColor: healthPercent >= 70 ? 'var(--color-success)' : healthPercent >= 40 ? 'var(--color-warning)' : 'var(--color-danger)',
                   }}
                 />
               </div>
@@ -187,11 +215,11 @@ export default function DashboardPage() {
                 className="text-xs font-medium"
                 style={{ color: 'var(--color-text-secondary)' }}
               >
-                72%
+                {healthPercent}%
               </span>
             </div>
-            <div className="flex justify-between mt-2 text-[10px]" style={{ color: 'var(--color-text-muted)' }}>
-              <span>0 Projects</span>
+            <div className="flex justify-between mt-2 text-xs" style={{ color: 'var(--color-text-muted)' }}>
+              <span>{projectCount} Projects</span>
               <span>0 FTEs</span>
             </div>
           </div>
@@ -200,8 +228,9 @@ export default function DashboardPage() {
         {/* Collapse toggle */}
         <button
           onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
-          className="flex items-center justify-center py-3 border-t transition-colors hover:bg-white/5"
+          className="flex items-center justify-center py-4 border-t transition-colors hover:bg-white/5 min-h-[44px]"
           style={{ borderColor: 'var(--color-border)' }}
+          aria-label={sidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
         >
           <ChevronRight
             size={16}
@@ -215,7 +244,7 @@ export default function DashboardPage() {
       </aside>
 
       {/* Main Content */}
-      <main className="flex-1 flex flex-col overflow-hidden">
+      <main id="main-content" className="flex-1 flex flex-col overflow-hidden">
         {/* Header */}
         <header
           className="flex items-center justify-between px-6 py-3 border-b"
@@ -230,7 +259,7 @@ export default function DashboardPage() {
             </h2>
             {(currentView === 'GANTT' || currentView === 'SUBWAY') && (
               <div
-                className="flex items-center rounded-lg p-0.5"
+                className="hidden md:flex items-center rounded-lg p-0.5"
                 style={{ backgroundColor: 'var(--color-surface-raised)' }}
               >
                 <button
@@ -264,7 +293,7 @@ export default function DashboardPage() {
           <div className="flex items-center gap-3">
             <button
               onClick={() => setShowOnboarding(true)}
-              className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-medium transition-colors"
+              className="flex items-center gap-2 px-3 py-2.5 rounded-lg text-xs font-medium transition-colors min-h-[44px]"
               style={{
                 backgroundColor: 'var(--color-surface-raised)',
                 color: 'var(--color-text-secondary)',
@@ -275,7 +304,7 @@ export default function DashboardPage() {
             </button>
             <button
               onClick={() => setAiPanelOpen(!aiPanelOpen)}
-              className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-medium transition-colors"
+              className="flex items-center gap-2 px-3 py-2.5 rounded-lg text-xs font-medium transition-colors min-h-[44px]"
               style={{
                 backgroundColor: aiPanelOpen ? 'var(--color-primary)15' : 'var(--color-surface-raised)',
                 color: aiPanelOpen ? 'var(--color-primary-light)' : 'var(--color-text-secondary)',
@@ -444,7 +473,8 @@ export default function DashboardPage() {
                 }}
                 onThemeChange={(t) => {
                   setTheme(t);
-                  document.documentElement.className = t === 'system' ? '' : t;
+                  document.documentElement.classList.remove('dark', 'light');
+                  if (t !== 'system') document.documentElement.classList.add(t);
                 }}
               />
             </div>
@@ -454,14 +484,30 @@ export default function DashboardPage() {
             <div className="flex flex-col items-center justify-center h-full gap-4 p-6"
               style={{ color: 'var(--color-text-muted)' }}
             >
-              <Bot size={64} strokeWidth={1} style={{ color: 'var(--color-primary)' }} />
+              <Shield size={64} strokeWidth={1} style={{ color: 'var(--color-primary)' }} />
               <h3 className="text-xl font-semibold" style={{ color: 'var(--color-text)' }}>
-                Governance
+                Governance Module
               </h3>
               <p className="text-sm text-center max-w-md">
-                Governance module is coming in Phase 8. Stage gates, compliance tracking,
-                and decision logging are already in the database schema.
+                Stage gates, compliance tracking, and decision logging are planned for Phase 8.
+                The database schema is already in place.
               </p>
+              <div className="flex gap-3 mt-2">
+                <button
+                  onClick={() => setCurrentView('REPORTING')}
+                  className="px-4 py-2.5 rounded-lg text-sm font-medium min-h-[44px]"
+                  style={{ backgroundColor: 'var(--color-surface-raised)', color: 'var(--color-text-secondary)' }}
+                >
+                  View Reports Instead
+                </button>
+                <button
+                  onClick={() => setShowOnboarding(true)}
+                  className="px-4 py-2.5 rounded-lg text-sm font-medium min-h-[44px]"
+                  style={{ backgroundColor: 'var(--color-primary)', color: 'white' }}
+                >
+                  Configure Settings
+                </button>
+              </div>
             </div>
           )}
         </div>
@@ -528,61 +574,39 @@ export default function DashboardPage() {
       {/* Comparison overlay */}
       {showComparison && (
         <div
-          style={{
-            position: 'fixed',
-            inset: 0,
-            zIndex: 9998,
-            background: 'rgba(0,0,0,0.6)',
-            backdropFilter: 'blur(4px)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            padding: 24,
-          }}
+          className="fixed inset-0 z-[9998] flex items-center justify-center p-6 bg-black/60 backdrop-blur-sm"
           onClick={(e) => {
             if (e.target === e.currentTarget) setShowComparison(false);
           }}
         >
           <div
+            className="w-[90vw] max-w-[1100px] max-h-[85vh] overflow-auto rounded-2xl shadow-2xl"
             style={{
-              width: '90vw',
-              maxWidth: 1100,
-              maxHeight: '85vh',
-              overflow: 'auto',
-              borderRadius: 16,
-              background: 'var(--color-surface)',
+              backgroundColor: 'var(--color-surface)',
               border: '1px solid var(--color-border)',
-              boxShadow: '0 25px 50px -12px rgba(0,0,0,0.5)',
             }}
           >
             <div
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                padding: '16px 24px',
-                borderBottom: '1px solid var(--color-border)',
-              }}
+              className="flex items-center justify-between px-6 py-4 border-b"
+              style={{ borderColor: 'var(--color-border)' }}
             >
-              <h3 style={{ fontSize: 16, fontWeight: 600, color: 'var(--color-text)' }}>
+              <h3 className="text-base font-semibold" style={{ color: 'var(--color-text)' }}>
                 Snapshot Comparison
               </h3>
               <button
                 onClick={() => setShowComparison(false)}
+                className="px-3 py-1.5 rounded-md text-sm cursor-pointer min-h-[44px] flex items-center"
                 style={{
-                  padding: '4px 12px',
-                  borderRadius: 6,
                   border: '1px solid var(--color-border)',
-                  background: 'var(--color-surface-raised)',
+                  backgroundColor: 'var(--color-surface-raised)',
                   color: 'var(--color-text-muted)',
-                  fontSize: 13,
-                  cursor: 'pointer',
                 }}
+                aria-label="Close comparison"
               >
                 Close
               </button>
             </div>
-            <div style={{ padding: 24 }}>
+            <div className="p-6">
               <ComparisonView
                 snapshots={[]}
                 onCompare={async (oldId: string, newId: string) => {

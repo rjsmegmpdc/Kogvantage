@@ -744,7 +744,7 @@ function TemplatesTab() {
             </div>
 
             <span
-              className="px-2 py-0.5 rounded-full text-[10px] font-semibold uppercase tracking-wider shrink-0"
+              className="px-2 py-0.5 rounded-full text-xs font-semibold uppercase tracking-wider shrink-0"
               style={{
                 backgroundColor: `${TEMPLATE_TYPE_COLORS[template.type]}20`,
                 color: TEMPLATE_TYPE_COLORS[template.type],

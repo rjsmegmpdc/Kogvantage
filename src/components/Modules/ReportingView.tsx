@@ -257,7 +257,7 @@ export default function ReportingView({ onGenerateReport, onAIReport }: Reportin
                         {card.title}
                       </span>
                       <span
-                        className="text-[10px] font-bold"
+                        className="text-xs font-bold"
                         style={{
                           padding: '2px 6px',
                           borderRadius: 4,

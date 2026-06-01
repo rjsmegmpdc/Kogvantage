@@ -102,7 +102,7 @@ export default function AssistantPanel({ isOpen, onClose }: AssistantPanelProps)
 
   return (
     <aside
-      className="flex flex-col border-l h-full"
+      className="flex flex-col border-l h-full ai-panel-enter"
       style={{
         width: '360px',
         backgroundColor: 'var(--color-surface)',
@@ -126,7 +126,7 @@ export default function AssistantPanel({ isOpen, onClose }: AssistantPanelProps)
               AI Assistant
             </h3>
             <span
-              className="text-[10px] px-1.5 py-0.5 rounded-full font-medium"
+              className="text-xs px-1.5 py-0.5 rounded-full font-medium"
               style={{
                 backgroundColor: 'var(--color-primary)20',
                 color: 'var(--color-primary-light)',
@@ -138,8 +138,9 @@ export default function AssistantPanel({ isOpen, onClose }: AssistantPanelProps)
         </div>
         <button
           onClick={onClose}
-          className="p-1 rounded-md transition-colors hover:bg-white/10"
+          className="p-2 rounded-md transition-colors hover:bg-white/10 min-h-[44px] min-w-[44px] flex items-center justify-center"
           style={{ color: 'var(--color-text-muted)' }}
+          aria-label="Close AI assistant"
         >
           <X size={16} />
         </button>
@@ -154,7 +155,7 @@ export default function AssistantPanel({ isOpen, onClose }: AssistantPanelProps)
           <button
             key={action.label}
             onClick={() => handleSend(action.prompt)}
-            className="flex items-center gap-1 px-2 py-1 rounded-md text-[10px] font-medium whitespace-nowrap transition-colors hover:bg-white/5"
+            className="flex items-center gap-1 px-2 py-1 rounded-md text-xs font-medium whitespace-nowrap transition-colors hover:bg-white/5"
             style={{
               backgroundColor: 'var(--color-surface-raised)',
               color: 'var(--color-text-secondary)',
@@ -256,8 +257,9 @@ export default function AssistantPanel({ isOpen, onClose }: AssistantPanelProps)
           <button
             onClick={() => handleSend()}
             disabled={!input.trim() || isLoading}
-            className="p-1 rounded-md transition-colors disabled:opacity-30"
+            className="p-2 rounded-md transition-colors disabled:opacity-30 min-h-[44px] min-w-[44px] flex items-center justify-center"
             style={{ color: 'var(--color-primary-light)' }}
+            aria-label="Send message"
           >
             <Send size={14} />
           </button>

@@ -399,7 +399,7 @@ function ErrorTable({ errors }: { errors: ImportError[] }) {
                 </td>
                 <td className="px-4 py-2">
                   <span
-                    className="inline-flex px-1.5 py-0.5 rounded text-[10px] font-medium uppercase"
+                    className="inline-flex px-1.5 py-0.5 rounded text-xs font-medium uppercase"
                     style={{
                       color:
                         err.severity === 'error'

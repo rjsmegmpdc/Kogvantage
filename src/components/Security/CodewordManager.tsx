@@ -660,7 +660,7 @@ export default function CodewordManager({
                   {entry.rolesWithAccess.slice(0, 3).map((role) => (
                     <span
                       key={role}
-                      className="px-1.5 py-0.5 rounded text-[10px] font-medium"
+                      className="px-1.5 py-0.5 rounded text-xs font-medium"
                       style={{
                         backgroundColor: 'var(--color-surface-raised)',
                         color: 'var(--color-text-secondary)',
@@ -672,7 +672,7 @@ export default function CodewordManager({
                   ))}
                   {entry.rolesWithAccess.length > 3 && (
                     <span
-                      className="px-1.5 py-0.5 rounded text-[10px] font-medium"
+                      className="px-1.5 py-0.5 rounded text-xs font-medium"
                       style={{ color: 'var(--color-text-muted)' }}
                     >
                       +{entry.rolesWithAccess.length - 3}

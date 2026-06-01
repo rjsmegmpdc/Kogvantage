@@ -309,7 +309,7 @@ function AlertCard({
             {/* Labels row */}
             <div className="flex flex-wrap items-center gap-2 mb-1">
               <span
-                className="inline-flex px-1.5 py-0.5 rounded text-[10px] font-bold uppercase tracking-wide"
+                className="inline-flex px-1.5 py-0.5 rounded text-xs font-bold uppercase tracking-wide"
                 style={{
                   color: severityColor,
                   backgroundColor: `${severityColor}15`,
@@ -318,7 +318,7 @@ function AlertCard({
                 {alert.severity}
               </span>
               <span
-                className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-medium uppercase"
+                className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-xs font-medium uppercase"
                 style={{
                   color: 'var(--color-text-muted)',
                   backgroundColor: 'var(--color-surface-raised)',
@@ -328,7 +328,7 @@ function AlertCard({
               </span>
               {alert.acknowledged && (
                 <span
-                  className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-medium"
+                  className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-xs font-medium"
                   style={{
                     color: 'var(--color-success)',
                     backgroundColor: 'var(--color-success)15',

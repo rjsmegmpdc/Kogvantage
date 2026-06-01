@@ -464,7 +464,7 @@ export default function CoordinatorDashboard({
                     {alert.message}
                   </span>
                   <span
-                    className="text-[10px] font-medium uppercase px-1.5 py-0.5 rounded"
+                    className="text-xs font-medium uppercase px-1.5 py-0.5 rounded"
                     style={{
                       color: severityColor,
                       backgroundColor: `${severityColor}15`,

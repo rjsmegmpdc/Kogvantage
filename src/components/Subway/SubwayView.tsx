@@ -418,7 +418,7 @@ const SubwayView: React.FC<SubwayViewProps> = ({
             <h1 className="text-lg font-bold tracking-tight leading-tight">
               Infrastructure Roadmap
             </h1>
-            <span className="text-[10px] uppercase tracking-wider font-semibold opacity-60">
+            <span className="text-xs uppercase tracking-wider font-semibold opacity-60">
               2024-2025
             </span>
           </div>

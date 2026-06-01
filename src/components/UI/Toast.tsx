@@ -55,6 +55,9 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
       {children}
       {/* Toast container */}
       <div
+        role="status"
+        aria-live="polite"
+        aria-atomic="true"
         style={{
           position: 'fixed',
           bottom: 24,
@@ -84,6 +87,7 @@ function ToastItem({ toast, onDismiss }: { toast: Toast; onDismiss: () => void }
 
   return (
     <div
+      role={toast.type === 'error' ? 'alert' : undefined}
       style={{
         display: 'flex',
         alignItems: 'center',
@@ -105,6 +109,7 @@ function ToastItem({ toast, onDismiss }: { toast: Toast; onDismiss: () => void }
       <span style={{ flex: 1 }}>{toast.message}</span>
       <button
         onClick={onDismiss}
+        aria-label="Dismiss notification"
         style={{
           background: 'none',
           border: 'none',

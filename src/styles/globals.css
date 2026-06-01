@@ -5,6 +5,30 @@
    Dark-first, with light mode overrides
    ============================================================ */
 
+@theme {
+  --color-primary: #2563eb;
+  --color-primary-hover: #1d4ed8;
+  --color-primary-light: #3b82f6;
+  --color-background: #020617;
+  --color-surface: #0f172a;
+  --color-surface-raised: #1e293b;
+  --color-surface-overlay: #334155;
+  --color-text: #f8fafc;
+  --color-text-secondary: #cbd5e1;
+  --color-text-muted: #94a3b8;
+  --color-border: #1e293b;
+  --color-border-hover: #334155;
+  --color-success: #22c55e;
+  --color-warning: #eab308;
+  --color-danger: #ef4444;
+  --color-info: #06b6d4;
+  --color-today: #ef4444;
+  --color-grid: #1e293b;
+  --color-grid-year: #334155;
+  --font-sans: var(--font-inter, 'Inter'), system-ui, -apple-system, sans-serif;
+  --font-mono: var(--font-jetbrains, 'JetBrains Mono'), 'Fira Code', monospace;
+}
+
 :root {
   /* Brand */
   --color-primary: #2563eb;
@@ -58,8 +82,8 @@
   --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.5);
 
   /* Font */
-  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
-  --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+  --font-sans: var(--font-inter, 'Inter'), system-ui, -apple-system, sans-serif;
+  --font-mono: var(--font-jetbrains, 'JetBrains Mono'), 'Fira Code', monospace;
 
   color-scheme: dark;
 }
@@ -99,6 +123,24 @@ body {
   min-height: 100vh;
 }
 
+/* Skip to content link */
+.skip-link {
+  position: absolute;
+  top: -100%;
+  left: 16px;
+  z-index: 10000;
+  padding: 8px 16px;
+  background: var(--color-primary);
+  color: white;
+  border-radius: var(--radius-md);
+  font-size: 14px;
+  font-weight: 500;
+  text-decoration: none;
+}
+.skip-link:focus {
+  top: 16px;
+}
+
 /* Custom scrollbar */
 ::-webkit-scrollbar {
   width: 8px;
@@ -135,9 +177,27 @@ body {
   to { transform: translateX(0); opacity: 1; }
 }
 
+@keyframes slideInRight {
+  from { transform: translateX(100%); }
+  to { transform: translateX(0); }
+}
+
 @keyframes fadeIn {
   from { opacity: 0; }
   to { opacity: 1; }
+}
+
+.ai-panel-enter {
+  animation: slideInRight 0.2s ease-out;
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }
 
 /* Selection */

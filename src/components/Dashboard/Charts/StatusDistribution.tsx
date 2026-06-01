@@ -104,7 +104,7 @@ export default function StatusDistribution({ data }: StatusDistributionProps) {
             {total}
           </span>
           <span
-            className="text-[10px] uppercase tracking-wider"
+            className="text-xs uppercase tracking-wider"
             style={{ color: 'var(--color-text-muted)' }}
           >
             Projects

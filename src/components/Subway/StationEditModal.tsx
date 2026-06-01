@@ -57,7 +57,7 @@ const StationEditModal: React.FC<StationEditModalProps> = ({
             <div>
               <div className="flex items-center gap-2 mb-2">
                 <span
-                  className="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider border"
+                  className="px-2 py-0.5 rounded text-xs font-bold uppercase tracking-wider border"
                   style={{
                     borderColor: activeStation.route.color,
                     color: activeStation.route.color,
@@ -84,7 +84,7 @@ const StationEditModal: React.FC<StationEditModalProps> = ({
             {/* Labels */}
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-[10px] font-bold uppercase tracking-wider opacity-60 mb-1.5">
+                <label className="block text-xs font-bold uppercase tracking-wider opacity-60 mb-1.5">
                   Label Top
                 </label>
                 <input
@@ -97,7 +97,7 @@ const StationEditModal: React.FC<StationEditModalProps> = ({
                 />
               </div>
               <div>
-                <label className="block text-[10px] font-bold uppercase tracking-wider opacity-60 mb-1.5">
+                <label className="block text-xs font-bold uppercase tracking-wider opacity-60 mb-1.5">
                   Label Bottom
                 </label>
                 <input
@@ -113,7 +113,7 @@ const StationEditModal: React.FC<StationEditModalProps> = ({
 
             {/* Description */}
             <div>
-              <label className="block text-[10px] font-bold uppercase tracking-wider opacity-60 mb-1.5">
+              <label className="block text-xs font-bold uppercase tracking-wider opacity-60 mb-1.5">
                 Description
               </label>
               <textarea
@@ -130,7 +130,7 @@ const StationEditModal: React.FC<StationEditModalProps> = ({
             {/* Dates */}
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-[10px] font-bold uppercase tracking-wider opacity-60 mb-1.5 flex items-center gap-1.5">
+                <label className="block text-xs font-bold uppercase tracking-wider opacity-60 mb-1.5 flex items-center gap-1.5">
                   <Calendar size={12} /> Start Date
                 </label>
                 <input
@@ -143,7 +143,7 @@ const StationEditModal: React.FC<StationEditModalProps> = ({
                 />
               </div>
               <div>
-                <label className="block text-[10px] font-bold uppercase tracking-wider opacity-60 mb-1.5 flex items-center gap-1.5">
+                <label className="block text-xs font-bold uppercase tracking-wider opacity-60 mb-1.5 flex items-center gap-1.5">
                   <Clock size={12} /> End Date
                 </label>
                 <input
@@ -160,7 +160,7 @@ const StationEditModal: React.FC<StationEditModalProps> = ({
             {/* Metadata */}
             <div className="grid grid-cols-2 gap-4 pt-2">
               <div>
-                <label className="block text-[10px] font-bold uppercase tracking-wider opacity-60 mb-1.5 flex items-center gap-1.5">
+                <label className="block text-xs font-bold uppercase tracking-wider opacity-60 mb-1.5 flex items-center gap-1.5">
                   <Tag size={12} /> Type
                 </label>
                 <select
@@ -178,7 +178,7 @@ const StationEditModal: React.FC<StationEditModalProps> = ({
                 </select>
               </div>
               <div>
-                <label className="block text-[10px] font-bold uppercase tracking-wider opacity-60 mb-1.5 flex items-center gap-1.5">
+                <label className="block text-xs font-bold uppercase tracking-wider opacity-60 mb-1.5 flex items-center gap-1.5">
                   <Info size={12} /> Status
                 </label>
                 <select
