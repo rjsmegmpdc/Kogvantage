@@ -982,8 +982,4 @@ export default function SettingsView({ settings, onSettingChange, onThemeChange 
         })}
       </div>
 
-      {/* Tab content */}
-      <div className="flex-1 overflow-y-auto p-6">{renderTab()}</div>
-    </div>
-  );
-}
+      {/* Tab co

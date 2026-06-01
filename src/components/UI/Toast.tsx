@@ -113,14 +113,4 @@ function ToastItem({ toast, onDismiss }: { toast: Toast; onDismiss: () => void }
         style={{
           background: 'none',
           border: 'none',
-          color: 'var(--color-text-muted)',
-          cursor: 'pointer',
-          padding: 2,
-          flexShrink: 0,
-        }}
-      >
-        <X size={14} />
-      </button>
-    </div>
-  );
-}
+          color: 'var

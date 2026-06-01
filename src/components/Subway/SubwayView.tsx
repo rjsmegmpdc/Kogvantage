@@ -867,13 +867,4 @@ const SubwayView: React.FC<SubwayViewProps> = ({
       <style>{`
         .custom-scrollbar::-webkit-scrollbar { height: 8px; width: 8px; }
         .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
-        .custom-scrollbar::-webkit-scrollbar-thumb { background: ${activeTheme === 'dark' ? '#334155' : '#cbd5e1'}; border-radius: 4px; }
-        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: ${activeTheme === 'dark' ? '#475569' : '#94a3b8'}; }
-        .no-scrollbar::-webkit-scrollbar { display: none; }
-        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-      `}</style>
-    </div>
-  );
-};
-
-export default SubwayView;
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: ${activeTheme === 'dark' ? '#3

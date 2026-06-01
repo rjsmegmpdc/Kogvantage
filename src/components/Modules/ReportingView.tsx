@@ -539,3 +539,4 @@ export default function ReportingView({ onGenerateReport, onAIReport }: Reportin
     </div>
   );
 }
+    

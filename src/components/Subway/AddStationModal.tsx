@@ -276,12 +276,4 @@ const AddStationModal: React.FC<AddStationModalProps> = ({
             }
             className="px-6 py-2 text-sm font-bold text-white bg-blue-600 hover:bg-blue-700 rounded shadow-sm disabled:opacity-50"
           >
-            Add Station
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-};
-
-export default AddStationModal;
+           

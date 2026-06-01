@@ -254,6 +254,4 @@ const styles: Record<string, React.CSSProperties> = {
     fontSize: '12px',
     cursor: 'pointer',
     fontFamily: 'inherit',
-    transition: 'background 0.15s',
-  },
-};
+    transit

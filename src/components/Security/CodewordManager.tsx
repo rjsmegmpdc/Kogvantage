@@ -705,15 +705,4 @@ export default function CodewordManager({
                     }}
                     title="Delete"
                     aria-label="Delete codeword"
-                  >
-                    <Trash2 size={13} />
-                  </button>
-                </div>
-              </div>
-            );
-          })}
-        </div>
-      )}
-    </div>
-  );
-}
+           

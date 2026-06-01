@@ -258,13 +258,4 @@ export default function AssistantPanel({ isOpen, onClose }: AssistantPanelProps)
             onClick={() => handleSend()}
             disabled={!input.trim() || isLoading}
             className="p-2 rounded-md transition-colors disabled:opacity-30 min-h-[44px] min-w-[44px] flex items-center justify-center"
-            style={{ color: 'var(--color-primary-light)' }}
-            aria-label="Send message"
-          >
-            <Send size={14} />
-          </button>
-        </div>
-      </div>
-    </aside>
-  );
-}
+    

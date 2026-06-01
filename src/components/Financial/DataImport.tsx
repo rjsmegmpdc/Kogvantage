@@ -624,10 +624,4 @@ export default function DataImport({
       {/* Import results */}
       {lastResult && (
         <div className="flex flex-col gap-4">
-          <ResultBanner result={lastResult} />
-          <ErrorTable errors={lastResult.errors} />
-        </div>
-      )}
-    </div>
-  );
-}
+          <ResultBanner result={lastResult}
