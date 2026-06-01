@@ -85,11 +85,11 @@ export default function DashboardPage() {
     auto_save: 'true',
   });
 
-  // Auto-collapse sidebar on mobile
+  // Auto-collapse sidebar on mobile, re-expand on desktop
   useEffect(() => {
     const mql = window.matchMedia('(max-width: 768px)');
     const handler = (e: MediaQueryListEvent) => {
-      if (e.matches) setSidebarCollapsed(true);
+      setSidebarCollapsed(e.matches);
     };
     mql.addEventListener('change', handler);
     if (mql.matches) setSidebarCollapsed(true);
