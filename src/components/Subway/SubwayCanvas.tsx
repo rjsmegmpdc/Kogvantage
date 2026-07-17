@@ -378,4 +378,3 @@ const SubwayCanvas: React.FC<SubwayCanvasProps> = ({
 };
 
 export default SubwayCanvas;
-        

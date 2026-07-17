@@ -371,4 +371,9 @@ export default function TemplateEditor({ template, onSave, onCancel }: TemplateE
           className="inline-flex items-center gap-2 rounded-lg bg-[var(--ring)] px-4 py-2 text-sm font-medium text-white hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed"
         >
           <Save size={16} />
-          {t
+          {template ? 'Save Changes' : 'Create Template'}
+        </button>
+      </div>
+    </div>
+  );
+}

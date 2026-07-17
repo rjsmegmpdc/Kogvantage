@@ -594,4 +594,3 @@ export default function VarianceAlerts({
     </div>
   );
 }
-            

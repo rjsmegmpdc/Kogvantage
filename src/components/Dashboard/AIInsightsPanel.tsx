@@ -251,4 +251,3 @@ export default function AIInsightsPanel({ insights: propInsights }: AIInsightsPa
     </div>
   );
 }
-    

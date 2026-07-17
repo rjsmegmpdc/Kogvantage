@@ -215,4 +215,10 @@ const StationEditModal: React.FC<StationEditModalProps> = ({
           >
             <Save size={14} /> Save Changes
           </button>
-      
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default StationEditModal;
